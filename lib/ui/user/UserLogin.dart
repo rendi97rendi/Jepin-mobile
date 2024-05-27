@@ -219,13 +219,13 @@ class _UserLoginState extends State<UserLogin> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => NewWebView(
-                                title: 'Lupa Kata Sandi',
-                                url: 'https://jepin.pontianak.go.id/',
-                                breadcrumbs: 'Lupa Kata Sandi',
+                                title: 'Reset Kata Sandi',
+                                url: 'https://jepin.pontianak.go.id/forgot-password',
+                                breadcrumbs: 'Reset Kata Sandi',
                               )),
                     );
                   },
-                  child: Text('Lupa Kata Sandi',
+                  child: Text('Reset Kata Sandi',
                       style: TextStyle(fontSize: 13, color: Colors.blue),
                       textAlign: TextAlign.right),
                 ),
