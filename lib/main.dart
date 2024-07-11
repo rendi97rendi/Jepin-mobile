@@ -13,6 +13,7 @@ void main() {
       scaffoldBackgroundColor: Color.fromARGB(255, 239, 240, 252),
       primarySwatch: Colors.orange,
       primaryColor: Colors.orange[300],
+      highlightColor: Colors.amberAccent,
     ),
     home: Splash(),
     routes: <String, WidgetBuilder>{

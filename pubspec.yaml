@@ -23,12 +23,12 @@ dependencies:
   cupertino_icons: ^1.0.0
   datetime_picker_formfield: ^2.0.0
   fancy_shimmer_image: ^2.0.1+1
-  filter_list: ^1.0.1
+  filter_list: ^1.0.2
   flutter:
     sdk: flutter
   flutter_cache_manager: ^3.3.0
   flutter_webview_plugin: ^0.4.0
-  flutter_widget_from_html_core: ^0.9.0
+  flutter_widget_from_html_core: ^0.9.0+1
   google_maps_flutter: ^2.1.2
   http: ^0.13.4
   intl: ^0.17.0

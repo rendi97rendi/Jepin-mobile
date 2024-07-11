@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:pontianak_smartcity/api/ApiService.dart';
+import 'package:pontianak_smartcity/common/MyColor.dart';
 import 'package:pontianak_smartcity/common/MyFontSize.dart';
 import 'package:pontianak_smartcity/common/MyHelper.dart';
 import 'package:pontianak_smartcity/common/MyString.dart';
@@ -145,7 +146,7 @@ class _NewsState extends State<News> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 3.0,
-        backgroundColor: Colors.orange,
+        backgroundColor: MyColor.colorAppbar,
         leading: Icon(
           Icons.newspaper,
           color: Colors.white,

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pontianak_smartcity/api/ApiService.dart';
+import 'package:pontianak_smartcity/common/MyColor.dart';
 import 'package:pontianak_smartcity/common/MyFontSize.dart';
 import 'package:pontianak_smartcity/common/MyHelper.dart';
 import 'package:pontianak_smartcity/common/MyString.dart';
@@ -141,7 +142,7 @@ class _NewsDetailState extends State<NewsDetail> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         elevation: 3.0,
-        backgroundColor: Colors.orange,
+        backgroundColor: MyColor.colorAppbar,
         title: Text(
           MyString.news.toUpperCase(),
           style: TextStyle(

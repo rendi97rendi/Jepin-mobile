@@ -9,30 +9,30 @@ import 'package:pontianak_smartcity/common/MyColor.dart';
 import 'package:pontianak_smartcity/common/MyFontSize.dart';
 import 'package:pontianak_smartcity/common/MyHelper.dart';
 import 'package:pontianak_smartcity/common/MyString.dart';
+import 'package:pontianak_smartcity/ui/hotel/HotelDetail.dart';
 import 'package:pontianak_smartcity/ui/master_layout/LayoutLoading.dart';
-import 'package:pontianak_smartcity/ui/tourism/TourismDetail.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:toast/toast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 String? _urlImage;
 
-class TourismList extends StatefulWidget {
+class SouvenirList extends StatefulWidget {
   final String title;
-  const TourismList({Key? key, required this.title}) : super(key: key);
+  const SouvenirList({Key? key, required this.title}) : super(key: key);
 
   @override
-  _TourismListState createState() => _TourismListState();
+  _SouvenirListState createState() => _SouvenirListState();
 }
 
-class _TourismListState extends State<TourismList> {
+class _SouvenirListState extends State<SouvenirList> {
   // --- variable ---
   String _category = "";
-  List _listTourismCategory = [];
-  var _loadingTourismCategory = true;
+  List _listSouvenirCategory = [];
+  var _loadingSouvenirCategory = true;
 
   List _listCarousel = [];
-  List _listTourism = [];
+  List _listHotel = [];
   int _page = 1;
   bool _dataLoading = false;
 
@@ -49,7 +49,7 @@ class _TourismListState extends State<TourismList> {
       initialRefresh: true,
     );
 
-    tourismCategory();
+    souvenirCategory();
     showData(1, "", _category, true);
 
     super.initState();
@@ -67,8 +67,6 @@ class _TourismListState extends State<TourismList> {
         controller: _searchController,
         style: TextStyle(color: Colors.black),
         decoration: InputDecoration(
-          labelText: MyString.search + " " + this.widget.title,
-          labelStyle: TextStyle(color: Colors.black45),
           hintText: MyString.search + " " + this.widget.title,
           hintStyle: TextStyle(color: Colors.black45),
           prefixIcon: Icon(
@@ -195,7 +193,7 @@ class _TourismListState extends State<TourismList> {
                 );
               }).toList());
 
-    final _tourismList = _dataLoading
+    final _hotelList = _dataLoading
         ? LayoutLoading()
         : Expanded(
             child: SmartRefresher(
@@ -206,36 +204,44 @@ class _TourismListState extends State<TourismList> {
                   : WaterDropMaterialHeader(
                       backgroundColor: Colors.orange,
                     ),
-              controller: _refreshController,
+              controller: _refreshController!,
               onRefresh: _onRefresh,
               onLoading: _onLoading,
               child: ListView(
                 //controller: _scrollController,
                 children: <Widget>[
+                  // Padding(
+                  //   padding: const EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 16.0),
+                  //   child: Text(
+                  //     this.widget.title.toUpperCase(),
+                  //     style: TextStyle(
+                  //         fontSize: MyFontSize.large,
+                  //         fontWeight: FontWeight.bold),
+                  //   ),
+                  // ),
                   GridView.builder(
                       shrinkWrap: true,
                       physics: ScrollPhysics(),
-                      itemCount: _listTourism == null ? 0 : _listTourism.length,
+                      itemCount: _listHotel == null ? 0 : _listHotel.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         childAspectRatio: 1 / 1.23,
                       ),
                       itemBuilder: (BuildContext context, int index) {
-                        return InkWell(
+                        return GestureDetector(
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TourismDetail(
-                                        id: _listTourism[index]["id"]
-                                            .toString(),
+                                  builder: (context) => HotelDetail(
+                                        id: _listHotel[index]["id"].toString(),
                                       )),
                             );
                           },
-                          child: _ViewHolderTourism(
-                            image: _listTourism[index]["details"],
-                            name: _listTourism[index]["nama"],
-                            address: _listTourism[index]["alamat"],
+                          child: _ViewHolderHotel(
+                            image: _listHotel[index]["details"],
+                            name: _listHotel[index]["nama"],
+                            address: _listHotel[index]["alamat"],
                           ),
                         );
                       }),
@@ -275,6 +281,9 @@ class _TourismListState extends State<TourismList> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          // SizedBox(
+          //   height: 10,
+          // ),
           _carouselFullScreen,
           SizedBox(
             height: 5,
@@ -283,7 +292,7 @@ class _TourismListState extends State<TourismList> {
           SizedBox(
             height: 5,
           ),
-          _tourismList,
+          _hotelList,
         ],
       ),
     );
@@ -291,7 +300,7 @@ class _TourismListState extends State<TourismList> {
 
   // --- Method ---
   Future<String> showData(
-      int page, String search, String category, bool clearListParent) async {
+      int page, String search, String filter, bool clearListParent) async {
     // setState(() {
     //   _dataLoading = true;
     // });
@@ -301,10 +310,10 @@ class _TourismListState extends State<TourismList> {
         "&search=" +
         search +
         "&category=" +
-        category;
+        filter;
 
     var response = await http.get(
-      Uri.parse(ApiService.tourismList + param),
+      Uri.parse(ApiService.hotelList + param),
       headers: {"Accept": "application/json"},
     );
 
@@ -318,7 +327,7 @@ class _TourismListState extends State<TourismList> {
         _urlImage = result["url_file"];
         data = result["data"]["data"];
 
-        if (clearListParent) _listTourism.clear();
+        if (clearListParent) _listHotel.clear();
 
         if (data.length == 0) {
           setState(() {
@@ -327,7 +336,7 @@ class _TourismListState extends State<TourismList> {
           });
         } else {
           setState(() {
-            _listTourism.addAll(data);
+            _listHotel.addAll(data);
             _refreshController.loadComplete();
           });
         }
@@ -349,13 +358,13 @@ class _TourismListState extends State<TourismList> {
     return "Success!";
   }
 
-  Future<String> tourismCategory() async {
+  Future<String> souvenirCategory() async {
     setState(() {
-      _loadingTourismCategory = true;
+      _loadingSouvenirCategory = true;
     });
 
     var response = await http.get(
-      Uri.parse(ApiService.tourismCategory),
+      Uri.parse(ApiService.hotelCategory),
       headers: {"Accept": "application/json"},
     );
 
@@ -363,16 +372,18 @@ class _TourismListState extends State<TourismList> {
       var result = json.decode(response.body);
 
       if (result["status"] == "success") {
-        _listTourismCategory = result["data"];
+        _listSouvenirCategory = result["data"];
       } else {
         MyHelper.toast(context, MyString.msgError);
+        ;
       }
     } else {
       MyHelper.toast(context, MyString.msgError);
+      ;
     }
 
     setState(() {
-      _loadingTourismCategory = false;
+      _loadingSouvenirCategory = false;
     });
 
     return "Success!";
@@ -394,88 +405,78 @@ class _TourismListState extends State<TourismList> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-              contentPadding: EdgeInsets.only(left: 25, right: 25),
               title: Text(
-                "Information",
+                MyString.category,
                 textAlign: TextAlign.center,
               ),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
               content: Container(
-                height: 300,
+                height: 300.0,
                 width: double.infinity,
-                child: Container(
-                  child: Column(
-                    children: [
-                      Divider(),
-                      Container(
-                        height: 250,
-                        width: 400,
-                        child: ListView.builder(
-                          itemCount: _listTourismCategory == null
-                              ? 1
-                              : _listTourismCategory.length + 1,
-                          itemBuilder: (BuildContext context, int index) {
-                            if ((_listTourismCategory.length + 1) ==
-                                (index + 1)) {
-                              return _listTourismCategory == null
-                                  ? Container()
-                                  : Column(
-                                      children: <Widget>[
-                                        InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              _dataLoading = true;
-                                              _category = "";
-
-                                              _page = 1;
-                                              showData(
-                                                  _page, "", _category, true);
-                                              Navigator.of(context).pop();
-                                            });
-                                          },
-                                          child: ListTile(
-                                            title: Text("Semua"),
-                                          ),
+                child: Column(
+                  children: [
+                    Divider(),
+                    Container(
+                      height: 250,
+                      width: 400,
+                      child: ListView.builder(
+                        itemCount: _listSouvenirCategory == null
+                            ? 1
+                            : _listSouvenirCategory.length + 1,
+                        itemBuilder: (BuildContext context, int index) {
+                          if ((_listSouvenirCategory.length + 1) == (index + 1)) {
+                            return _listSouvenirCategory == null
+                                ? Container()
+                                : Column(
+                                    children: <Widget>[
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            _dataLoading = true;
+                                            _category = "";
+                                            _page = 1;
+                                            showData(
+                                                _page, "", _category, true);
+                                            Navigator.of(context).pop();
+                                          });
+                                        },
+                                        child: ListTile(
+                                          title: Text("Semua"),
                                         ),
-                                        Divider(),
-                                      ],
-                                    );
-                            } else {
-                              return _listTourismCategory == null
-                                  ? Container()
-                                  : Column(
-                                      children: <Widget>[
-                                        InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              _dataLoading = true;
-                                              _category =
-                                                  _listTourismCategory[index]
-                                                          ["id"]
-                                                      .toString();
+                                      ),
+                                    ],
+                                  );
+                          } else {
+                            return _listSouvenirCategory == null
+                                ? Container()
+                                : Column(
+                                    children: <Widget>[
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            _dataLoading = true;
+                                            _category =
+                                                _listSouvenirCategory[index]["id"]
+                                                    .toString();
 
-                                              _page = 1;
-                                              showData(
-                                                  _page, "", _category, true);
-                                              Navigator.of(context).pop();
-                                            });
-                                          },
-                                          child: ListTile(
-                                            title: Text(
-                                                _listTourismCategory[index]
-                                                    ["nama_kategori"]),
-                                          ),
+                                            _page = 1;
+                                            showData(
+                                                _page, "", _category, true);
+                                            Navigator.of(context).pop();
+                                          });
+                                        },
+                                        child: ListTile(
+                                          title: Text(_listSouvenirCategory[index]
+                                              ["nama_kategori"]),
                                         ),
-                                        Divider(),
-                                      ],
-                                    );
-                            }
-                          },
-                        ),
+                                      ),
+                                      Divider(),
+                                    ],
+                                  );
+                          }
+                        },
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ));
         });
@@ -487,11 +488,11 @@ class _TourismListState extends State<TourismList> {
   }
 }
 
-class _ViewHolderTourism extends StatelessWidget {
+class _ViewHolderHotel extends StatelessWidget {
   final List image;
   final String name, address;
 
-  const _ViewHolderTourism(
+  const _ViewHolderHotel(
       {Key? key, required this.image, this.name = "", this.address = ""})
       : super(key: key);
 

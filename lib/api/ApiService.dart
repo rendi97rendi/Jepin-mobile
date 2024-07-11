@@ -9,6 +9,7 @@ class ApiService {
   static var basePemkotApi = 'https://pontianak.go.id/api/';
 
   static var setting = baseApi + "pengaturan"; //method get
+  static var kebijakanPrivasi = baseUrl + "/p/5-kebijakan-privasi"; //method get
   static var carousel = baseApi + "slider"; //method get
   static var homeMenu = baseApi + "menu"; //method get
 
@@ -55,7 +56,7 @@ class ApiService {
       baseApi + "delete_restaurant_review"; //method POST, param : id
   static var urlImageRestaurant = "/uploads/infoHotelRestoran/";
   static String teleponPenting = baseApi + "teleponpenting";
-  static var feedback = baseApi + "feedback/send";
+  // static var feedback = baseApi + "feedback/send";
 
   static var berita = basePemkotApi + "berita"; //method get
   static var latest = basePemkotApi + "berita/latest"; //method get
@@ -77,7 +78,13 @@ class ApiService {
       "user/update"; //method post, param : bearer token, name, username, email
   static var userDeleteProfile =
       baseApi + "user/delete"; //method post, param: bearer token, id
-  static var userFeedback = baseApi + 'feedback/send';
+  static var feedback = baseApi + 'feedback';
+  static var sendFeedback = baseApi + 'feedback/send';
+  static var sendEmail = baseApi + "user/kirim-email"; //method post, param : email
+  static var getCode = baseApi + "user/ambil-kode"; //method get, param : email
+  static var sendCode = baseApi + "user/send-kode"; //method post, param : email,code
+  static var updatePassword = baseApi + "user/update-password"; //method post, param : email,code
+      
 
   static var map = 'http://alpha3.pontive.web.id/api/map';
 }

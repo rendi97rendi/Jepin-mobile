@@ -7,6 +7,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:pontianak_smartcity/api/ApiService.dart';
+import 'package:pontianak_smartcity/common/MyColor.dart';
+import 'package:pontianak_smartcity/common/MyFontSize.dart';
 import 'package:pontianak_smartcity/common/MyHelper.dart';
 import 'package:pontianak_smartcity/common/MyString.dart';
 import 'package:pontianak_smartcity/ui/master_layout/LayoutLoading.dart';
@@ -27,6 +29,7 @@ class _UserRegisterState extends State<UserRegister> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _cpasswordController = TextEditingController();
+  final _phoneController = TextEditingController();
   bool isAgree = false;
   var _isLoading = false;
   var _passwordVisible = false;
@@ -39,6 +42,7 @@ class _UserRegisterState extends State<UserRegister> {
     FocusNode myFocusNodeEmail = new FocusNode();
     FocusNode myFocusNodePassword = new FocusNode();
     FocusNode myFocusNodeConfirmPassword = new FocusNode();
+    FocusNode myFocusNodePhone = new FocusNode();
 
     final logo = Hero(
       tag: 'hero',
@@ -67,7 +71,7 @@ class _UserRegisterState extends State<UserRegister> {
             size: 24.0,
           ),
         ),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
       ),
     );
 
@@ -89,7 +93,7 @@ class _UserRegisterState extends State<UserRegister> {
             size: 24.0,
           ),
         ),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
       ),
     );
 
@@ -111,7 +115,7 @@ class _UserRegisterState extends State<UserRegister> {
             size: 24.0,
           ),
         ),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
       ),
     );
 
@@ -133,7 +137,7 @@ class _UserRegisterState extends State<UserRegister> {
             size: 24.0,
           ),
         ),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
         suffixIcon: IconButton(
           icon: Icon(
             // Based on passwordVisible state choose the icon
@@ -170,7 +174,7 @@ class _UserRegisterState extends State<UserRegister> {
             size: 24.0,
           ),
         ),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
         suffixIcon: IconButton(
           icon: Icon(
             // Based on passwordVisible state choose the icon
@@ -187,6 +191,28 @@ class _UserRegisterState extends State<UserRegister> {
       ),
     );
 
+    final phone = TextFormField(
+      focusNode: myFocusNodePhone,
+      controller: _phoneController,
+      keyboardType: TextInputType.phone,
+      autofocus: false,
+      decoration: InputDecoration(
+        labelText: 'Nomor HP',
+        labelStyle: TextStyle(
+            color: myFocusNodePhone.hasFocus ? Colors.blue : Colors.grey),
+        contentPadding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 10.0),
+        prefixIcon: Padding(
+          padding: EdgeInsets.only(top: 0), // add padding to adjust icon
+          child: Icon(
+            CupertinoIcons.phone,
+            color: Colors.grey,
+            size: 24.0,
+          ),
+        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
+      ),
+    );
+
     final registerButton = Padding(
       padding: EdgeInsets.zero,
       child: ElevatedButton(
@@ -195,7 +221,7 @@ class _UserRegisterState extends State<UserRegister> {
               MaterialStateProperty.all<Color>(Colors.lightBlueAccent),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
+              borderRadius: BorderRadius.circular(10.0),
             ),
           ),
           padding: MaterialStateProperty.all<EdgeInsets>(
@@ -235,29 +261,54 @@ class _UserRegisterState extends State<UserRegister> {
     );
 
     return Scaffold(
-      // appBar: AppBar(
-      //   elevation: 3.0,
-      //   title: Text("Register"),
-      //   centerTitle: true,
-      // ),
+      appBar: AppBar(
+        elevation: 3.0,
+        backgroundColor: MyColor.colorAppbar,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new_rounded),
+          color: Colors.white,
+          onPressed: () {
+            if (context.mounted) {
+              Navigator.of(context).pop();
+            }
+          },
+        ),
+        title: Text(
+          MyString.register.toUpperCase(),
+          style: TextStyle(
+              fontSize: MyFontSize.large,
+              fontWeight: FontWeight.bold,
+              color: Colors.white),
+        ),
+        centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.minimize),
+            color: Colors.orange,
+            onPressed: () {},
+          ),
+        ],
+      ),
       backgroundColor: Colors.white,
       body: Center(
         child: ListView(
           shrinkWrap: true,
-          padding: EdgeInsets.only(left: 24.0, right: 24.0),
+          padding: EdgeInsets.only(left: 30.0, right: 30.0),
           children: <Widget>[
             logo,
             SizedBox(height: 20.0),
             fullName,
-            SizedBox(height: 8.0),
+            SizedBox(height: 10.0),
             username,
-            SizedBox(height: 8.0),
+            SizedBox(height: 10.0),
             email,
-            SizedBox(height: 8.0),
+            SizedBox(height: 10.0),
+            phone,
+            SizedBox(height: 10.0),
             password,
-            SizedBox(height: 8.0),
+            SizedBox(height: 10.0),
             cPassword,
-            SizedBox(height: 8.0),
+            SizedBox(height: 10.0),
             Container(
               child: Row(
                 children: <Widget>[
@@ -296,7 +347,7 @@ class _UserRegisterState extends State<UserRegister> {
             ),
             SizedBox(height: 24.0),
             registerButton,
-            SizedBox(height: 8.0),
+            SizedBox(height: 10.0),
             loginLabel,
           ],
         ),

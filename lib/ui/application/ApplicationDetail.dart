@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:pontianak_smartcity/common/MyColor.dart';
 import 'package:pontianak_smartcity/common/MyFontSize.dart';
 import 'package:pontianak_smartcity/common/MyHelper.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -45,7 +46,7 @@ class _ApplicationDetailState extends State<ApplicationDetail> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         elevation: 3.0,
-        backgroundColor: Colors.orange,
+        backgroundColor: MyColor.colorAppbar,
         title: Text(
           this.widget.name,
           style: TextStyle(

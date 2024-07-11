@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pontianak_smartcity/api/ApiService.dart';
+import 'package:pontianak_smartcity/common/MyColor.dart';
 import 'package:pontianak_smartcity/common/MyFontSize.dart';
 import 'package:pontianak_smartcity/common/MyHelper.dart';
 import 'package:pontianak_smartcity/common/MyString.dart';
@@ -25,6 +26,7 @@ class _AppsState extends State<Apps> {
     showData();
     super.initState();
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +73,7 @@ class _AppsState extends State<Apps> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 3,
-        backgroundColor: Colors.orange,
+        backgroundColor: MyColor.colorAppbar,
         leading: Icon(
           Icons.apps,
           color: Colors.white,

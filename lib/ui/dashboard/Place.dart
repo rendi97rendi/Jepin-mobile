@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:pontianak_smartcity/common/MyColor.dart';
 import 'package:pontianak_smartcity/ui/culinary/CulinaryList.dart';
 import 'package:pontianak_smartcity/ui/hotel/HotelList.dart';
+import 'package:pontianak_smartcity/ui/souvenir/SouvenirList.dart';
 import 'package:pontianak_smartcity/ui/tourism/TourismList.dart';
 import 'package:pontianak_smartcity/api/ApiService.dart';
 import 'package:pontianak_smartcity/common/MyFontSize.dart';
@@ -90,35 +92,42 @@ class _PlaceState extends State<Place> {
                 )),
       );
     } else if (index == 3) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Theme(
-            data: ThemeData(canvasColor: Colors.orange),
-            child: AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20.0)),
-              ),
-              title: const Text(
-                'Oleh - Oleh',
-                textAlign: TextAlign.center,
-              ),
-              content: const Text(
-                'Tidak ada destinasi oleh-oleh yang terdaftar!',
-                textAlign: TextAlign.center,
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-          );
-        },
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SouvenirList(
+                  title: _menuTitle[index],
+                )),
       );
+      // showDialog(
+      //   context: context,
+      //   builder: (BuildContext context) {
+      //     return Theme(
+      //       data: ThemeData(canvasColor: Colors.orange),
+      //       child: AlertDialog(
+      //         shape: RoundedRectangleBorder(
+      //           borderRadius: BorderRadius.all(Radius.circular(20.0)),
+      //         ),
+      //         title: const Text(
+      //           'Oleh - Oleh',
+      //           textAlign: TextAlign.center,
+      //         ),
+      //         content: const Text(
+      //           'Tidak ada destinasi oleh-oleh yang terdaftar!',
+      //           textAlign: TextAlign.center,
+      //         ),
+      //         actions: <Widget>[
+      //           TextButton(
+      //             child: const Text('OK'),
+      //             onPressed: () {
+      //               Navigator.of(context).pop();
+      //             },
+      //           ),
+      //         ],
+      //       ),
+      //     );
+      //   },
+      // );
     }
   }
 
@@ -312,7 +321,7 @@ class _PlaceState extends State<Place> {
     return Scaffold(
       appBar: AppBar(
         elevation: 3,
-        backgroundColor: Colors.orange,
+        backgroundColor: MyColor.colorAppbar,
         leading: Icon(
           Icons.place,
           color: Colors.white,

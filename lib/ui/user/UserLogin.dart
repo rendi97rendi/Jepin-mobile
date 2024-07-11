@@ -10,6 +10,7 @@ import 'package:pontianak_smartcity/common/MyString.dart';
 import 'package:pontianak_smartcity/ui/dashboard/Dashboard.dart';
 import 'package:pontianak_smartcity/ui/master_layout/LayoutLoading.dart';
 import 'package:pontianak_smartcity/ui/user/UserRegister.dart';
+import 'package:pontianak_smartcity/ui/user/UserResetPassword.dart';
 import 'package:pontianak_smartcity/ui/webview/NewWebView.dart';
 import 'package:toast/toast.dart';
 
@@ -217,13 +218,18 @@ class _UserLoginState extends State<UserLogin> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => NewWebView(
-                                title: 'Reset Kata Sandi',
-                                url: 'https://jepin.pontianak.go.id/forgot-password',
-                                breadcrumbs: 'Reset Kata Sandi',
-                              )),
+                      MaterialPageRoute(builder: (context) => UserResetPassword()),
                     );
+
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //       builder: (context) => NewWebView(
+                    //             title: 'Reset Kata Sandi',
+                    //             url: 'https://jepin.pontianak.go.id/forgot-password',
+                    //             breadcrumbs: 'Reset Kata Sandi',
+                    //           )),
+                    // );
                   },
                   child: Text('Reset Kata Sandi',
                       style: TextStyle(fontSize: 13, color: Colors.blue),
@@ -247,9 +253,10 @@ class _UserLoginState extends State<UserLogin> {
 
     String _bearerToken;
     String _idUser;
+    String _email = _emailController.text;
 
     var map = new Map<String, dynamic>();
-    map["email"] = _emailController.text;
+    map["email"] = _email;
     map["password"] = _passwordController.text;
 
     var response = await http.post(Uri.parse(ApiService.userLogin),
@@ -262,7 +269,7 @@ class _UserLoginState extends State<UserLogin> {
         _bearerToken = "Bearer " + result["data"]["token"];
         _idUser = result["data"]["id"].toString();
 
-        MyHelperActivity.saveToken(_bearerToken, _idUser);
+        MyHelperActivity.saveToken(_bearerToken, _idUser, _email);
 
         Navigator.pushAndRemoveUntil(
             context,

@@ -98,15 +98,15 @@ class MyHelper {
   }
 
   static toast(BuildContext context, String message,
-      {int gravity = Toast.bottom}) {
+      {int gravity = Toast.bottom, int timeDuration = Toast.lengthShort}) {
     ToastContext().init(context);
     gravity == 1
-        ? Toast.show(message, duration: Toast.lengthShort, gravity: Toast.top)
+        ? Toast.show(message, duration: timeDuration, gravity: Toast.top)
         : gravity == 2
             ? Toast.show(message,
-                duration: Toast.lengthShort, gravity: Toast.center)
+                duration: timeDuration, gravity: Toast.center)
             : Toast.show(message,
-                duration: Toast.lengthShort, gravity: Toast.bottom);
+                duration: timeDuration, gravity: Toast.bottom);
   }
 
   static String encodeURL(String slug) {

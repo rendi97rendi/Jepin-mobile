@@ -8,6 +8,7 @@ import 'package:pontianak_smartcity/ui/dashboard/home_screen.dart';
 import 'package:pontianak_smartcity/ui/news/NewsList.dart';
 import 'package:pontianak_smartcity/ui/user/AccountScreen.dart';
 import 'package:pontianak_smartcity/ui/user/UserLogin.dart';
+import 'package:pontianak_smartcity/ui/webview/MyWebview.dart';
 import 'Place.dart';
 
 class Dashboard extends StatefulWidget {
@@ -69,8 +70,8 @@ class _DashboardState extends State<Dashboard> {
             case 2:
               return News();
             case 3:
-              return Apps();
-            case 4:
+            //   return Apps();
+            // case 4:
               return AccountScreen(this.callbackSelectDash);
             default:
               return HomeScreen(callback: this.callbackSelectDash);
@@ -100,10 +101,10 @@ class _DashboardState extends State<Dashboard> {
               icon: Icon(Icons.newspaper, size: 30),
               label: MyString.news,
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.apps, size: 30),
-              label: MyString.application,
-            ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(Icons.apps, size: 30),
+            //   label: MyString.application,
+            // ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_sharp, size: 30),
               label: MyString.account,

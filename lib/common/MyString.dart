@@ -13,6 +13,8 @@ class MyString {
   static const news = "Berita";
   static const application = "Aplikasi";
   static const account = "Akun";
+  static const register = "Daftar";
+  static const editProfile = "Ubah Profil";
 
   static final commodityPrices = "Harga Komoditas";
   static final waroengkite = "Waroengkite.id";
@@ -39,8 +41,12 @@ class MyString {
   static final nothingItemAgain = "Tidak ada item lagi";
   // Login dan Daftar
   static final usernameIncorrect = "Email atau Password Salah";
+  static final emailIncorrect = "Email anda tidak terdaftar";
+  static final emailEmpty = "Email tidak boleh kosong";
+  static final codeIncorrect = "Kode yang dimasukkan salah";
   static final loginSuccess = "Berhasi Login";
   static final dataCannotEmpty = "Data tidak boleh kosong";
+  static final errorOther = "Terjadi Kesalahan, silahkan coba lagi.";
   // Detail Komoditas
   static final priceAverage = "Harga Rata-rata";
   static final minPrice = "Harga Terendah";
@@ -54,6 +60,7 @@ class MyString {
   static const comment = "Komentar";
   static const send = "Kirim";
   static const event = "Event";
+  // Lainnya
   static const loginFirst = "Login terlebih dahulu";
   static const openMap = "Buka Map";
   static const copyNoHp = "Nomor HP telah disalin";

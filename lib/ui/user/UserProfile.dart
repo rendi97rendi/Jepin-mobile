@@ -3,9 +3,13 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:pontianak_smartcity/api/ApiService.dart';
+import 'package:pontianak_smartcity/common/MyColor.dart';
 import 'package:pontianak_smartcity/common/MyConstanta.dart';
+import 'package:pontianak_smartcity/common/MyFontSize.dart';
 import 'package:pontianak_smartcity/common/MyHelper.dart';
 import 'package:pontianak_smartcity/common/MyString.dart';
+import 'package:pontianak_smartcity/master_layout/widgets/TextDeskripsiForPas.dart';
+import 'package:pontianak_smartcity/master_layout/widgets/TextHeaderForPas.dart';
 import 'package:pontianak_smartcity/ui/master_layout/LayoutLoading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
@@ -129,8 +133,10 @@ class _UseProfileState extends State<UserProfile> {
         border: Border.all(color: Colors.grey),
       ),
       child: DropdownButton<String>(
+        dropdownColor: Colors.white,
         isExpanded: true,
         underline: Container(),
+        padding: EdgeInsets.all(8),
         value: dropdownValue,
         onChanged: (String? newValue) {
           setState(() {
@@ -141,7 +147,10 @@ class _UseProfileState extends State<UserProfile> {
             .map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
-            child: Text(value),
+            child: Text(
+              value,
+              style: TextStyle(fontWeight: FontWeight.normal),
+            ),
           );
         }).toList(),
       ),
@@ -189,14 +198,28 @@ class _UseProfileState extends State<UserProfile> {
             },
             // padding: EdgeInsets.all(12),
             // color: Colors.orange,
-            child:
-                Text('Update Profile', style: TextStyle(color: Colors.white)),
+            child: Text('Update Profil', style: TextStyle(color: Colors.white)),
           );
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ubah Profile'),
-        backgroundColor: Colors.white,
+        backgroundColor: MyColor.colorAppbar,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+            if (context.mounted) {
+              Navigator.of(context).pop();
+            }
+          },
+        ),
+        title: Text(
+          MyString.editProfile.toUpperCase(),
+          style: TextStyle(
+              fontSize: MyFontSize.large,
+              fontWeight: FontWeight.bold,
+              color: Colors.white),
+        ),
         centerTitle: true,
       ),
       backgroundColor: Colors.white,
@@ -214,14 +237,24 @@ class _UseProfileState extends State<UserProfile> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
+                      TextHeaderForgerPassword(
+                        header: "Ubah Profil Saya",
+                      ),
+                      TextDeskripsiForgetPassword(
+                        deskripsi:
+                            'Masukkan informasi terbaru tentang diri Anda untuk menampilkan profil yang lebih sesuai dengan anda',
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
                       fullName,
                       SizedBox(height: 16.0),
                       username,
                       SizedBox(height: 16.0),
                       email,
                       SizedBox(height: 16.0),
-                      birthday,
-                      SizedBox(height: 16.0),
+                      // birthday,
+                      // SizedBox(height: 16.0),
                       gender,
                       SizedBox(height: 16.0),
                       phone,
@@ -303,8 +336,6 @@ class _UseProfileState extends State<UserProfile> {
     map["phone"] = _phoneController.text;
     map["location"] = _locationController.text;
 
-    // print(map);
-
     var response = await http.post(Uri.parse(ApiService.userUpdateProfile),
         headers: {
           "Accept": "application/json",
@@ -314,8 +345,6 @@ class _UseProfileState extends State<UserProfile> {
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       var result = json.decode(response.body);
-
-      // print(result.toString());
 
       if (result["status"] == "success") {
         MyHelper.toast(

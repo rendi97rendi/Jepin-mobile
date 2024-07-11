@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:pontianak_smartcity/api/ApiService.dart';
+import 'package:pontianak_smartcity/common/MyColor.dart';
 import 'package:pontianak_smartcity/common/MyConstanta.dart';
+import 'package:pontianak_smartcity/common/MyFontSize.dart';
 import 'package:pontianak_smartcity/common/MyHelper.dart';
 import 'package:pontianak_smartcity/common/MyString.dart';
 import 'package:pontianak_smartcity/model/feedbackModel.dart';
@@ -34,7 +36,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   Future<void> fetchFeedback() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final response = await http.get(
-      Uri.parse('https://jepin.pontianak.go.id/api/feedback'),
+      Uri.parse(ApiService.feedback),
       headers: {
         "Accept": "application/json",
         "Authorization": prefs.getString(MyConstanta.saveToken) ?? '',
@@ -47,7 +49,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         feedbacks = result.map((e) => FeedbackModel.fromMap(e)).toList();
       });
     } else {
-      throw Exception('Failed to load data');
+      throw Exception('Gagal Memuat Data');
     }
   }
 
@@ -55,8 +57,22 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Kritik dan Saran'),
-        backgroundColor: Colors.white,
+        elevation: 3.0,
+        backgroundColor: MyColor.colorAppbar,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.pop(context, false);
+          },
+        ),
+        title: Text(
+          "Umpan Balik",
+          style: TextStyle(
+              fontSize: MyFontSize.large,
+              fontWeight: FontWeight.bold,
+              color: Colors.white),
+        ),
         centerTitle: true,
       ),
       body: Padding(
@@ -73,7 +89,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 autofocus: false,
                 maxLines: 3,
                 decoration: InputDecoration(
-                  labelText: 'Kritik dan Saran',
+                  labelText: 'Umpan Balik',
                   contentPadding: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 10.0),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0)),
@@ -86,7 +102,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       if (_pesanController.text.length < 1) {
                         MyHelper.toast(
                           context,
-                          'Mohon masukkan kritik dan saran anda',
+                          'Kami sangat menghargai kritik dan saran Anda berikan , sebagai masukan untuk perbaikan kami.',
                           // context,
                         );
                         return;
@@ -101,7 +117,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       map["pesan"] = _pesanController.text;
 
                       var response =
-                          await http.post(Uri.parse(ApiService.userFeedback),
+                          await http.post(Uri.parse(ApiService.sendFeedback),
                               headers: {
                                 "Accept": "application/json",
                                 "Authorization":
@@ -109,11 +125,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               },
                               body: map);
 
-                      if (response.statusCode == 200 ||
-                          response.statusCode == 201) {
+                      if (response.statusCode == 200 || response.statusCode == 201) {
                         var result = json.decode(response.body);
-
-                        print(result.toString());
 
                         setState(() {
                           isLoading = true;
@@ -137,13 +150,13 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       }
                     },
                     child: Text(
-                      'Kirim Kritik dan Saran',
+                      'Kirim',
                       style: TextStyle(color: Colors.white),
                     ),
                     style: ButtonStyle(
-                      padding: MaterialStateProperty.all<EdgeInsets>(
-                          EdgeInsets.all(15)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      backgroundColor: WidgetStatePropertyAll(Colors.green),
+                      padding: WidgetStatePropertyAll(EdgeInsets.all(10)),
+                      shape: WidgetStatePropertyAll(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),

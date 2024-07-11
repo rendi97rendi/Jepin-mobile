@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pontianak_smartcity/api/ApiService.dart';
+import 'package:pontianak_smartcity/common/MyColor.dart';
 import 'package:pontianak_smartcity/common/MyFontSize.dart';
 import 'package:pontianak_smartcity/common/MyHelper.dart';
 import 'package:pontianak_smartcity/common/MyString.dart';
@@ -243,7 +244,7 @@ class _CulinaryListState extends State<CulinaryList> {
     return Scaffold(
       appBar: AppBar(
         elevation: 3.0,
-        backgroundColor: Colors.orange,
+        backgroundColor: MyColor.colorAppbar,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           color: Colors.white,

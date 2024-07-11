@@ -25,29 +25,29 @@ import 'package:url_launcher/url_launcher.dart';
 
 String _userId = "";
 
-class TourismDetail extends StatefulWidget {
+class SouvenirDetail extends StatefulWidget {
   final String id;
-  const TourismDetail({Key? key, required this.id}) : super(key: key);
+  const SouvenirDetail({Key? key, required this.id}) : super(key: key);
 
   @override
-  _TourismDetailState createState() => _TourismDetailState();
+  _SouvenirDetailState createState() => _SouvenirDetailState();
 }
 
-class _TourismDetailState extends State<TourismDetail> {
+class _SouvenirDetailState extends State<SouvenirDetail> {
   // --- variable ---
 
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  //detail tourism
-  var _dataTourismDetail;
-  List _listTourismEvent = [];
-  List _listTourismImage = [];
+  //detail souvenir
+  var _dataSouvenirDetail;
+  List _listSouvenirEvent = [];
+  List _listSouvenirImage = [];
   bool _loadingDetail = true;
 
-  //review tourism
+  //review souvenir
   bool _loadingReview = true;
-  var _dataTourismReview;
-  List _listTourismReview = [];
+  var _dataSouvenirReview;
+  List _listSouvenirReview = [];
   int _page = 1;
 
   bool _loadCreateReview = false;
@@ -60,15 +60,14 @@ class _TourismDetailState extends State<TourismDetail> {
 
   @override
   void initState() {
-    showTourismDetail(this.widget.id);
-
-    showTourismReview(this.widget.id, "1", true);
+    showSouvenirDetail(this.widget.id);
+    showSouvenirReview(this.widget.id, "1", true);
 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
         _page++;
-        showTourismReview(this.widget.id, _page.toString(), false);
+        showSouvenirReview(this.widget.id, _page.toString(), false);
       }
     });
 
@@ -95,7 +94,7 @@ class _TourismDetailState extends State<TourismDetail> {
                   child: Column(
                     children: <Widget>[
                       Text(
-                        MyHelper.returnToString(_dataTourismDetail["nama"]),
+                        MyHelper.returnToString(_dataSouvenirDetail["nama"]),
                         //--- set value
                         style: TextStyle(
                             fontSize: MyFontSize.large,
@@ -106,7 +105,7 @@ class _TourismDetailState extends State<TourismDetail> {
                         height: 8.0,
                       ),
                       Text(
-                        MyHelper.returnToString(_dataTourismDetail["alamat"]),
+                        MyHelper.returnToString(_dataSouvenirDetail["alamat"]),
                         //--- set value
                         style: TextStyle(
                           fontSize: MyFontSize.small,
@@ -147,18 +146,18 @@ class _TourismDetailState extends State<TourismDetail> {
                                     MaterialPageRoute(
                                         builder: (context) => MyGoogleMap(
                                               name: MyHelper.returnToString(
-                                                  _dataTourismDetail["nama"]),
-                                              lat: _dataTourismDetail["lat"] ==
+                                                  _dataSouvenirDetail["nama"]),
+                                              lat: _dataSouvenirDetail["lat"] ==
                                                       null
                                                   ? 0.0
                                                   : double.parse(
-                                                      _dataTourismDetail[
+                                                      _dataSouvenirDetail[
                                                           "lat"]),
-                                              lon: _dataTourismDetail["lon"] ==
+                                              lon: _dataSouvenirDetail["lon"] ==
                                                       null
                                                   ? 0.0
                                                   : double.parse(
-                                                      _dataTourismDetail[
+                                                      _dataSouvenirDetail[
                                                           "lon"]),
                                             )),
                                   );
@@ -187,7 +186,7 @@ class _TourismDetailState extends State<TourismDetail> {
                         // color: Colors.red,
                         child: HtmlWidget(
                           MyHelper.returnToString(
-                              _dataTourismDetail["keterangan"]),
+                              _dataSouvenirDetail["keterangan"]),
                           //--- set value
                           // builderCallback: (meta, e) =>
                           //     e.classes.contains('smilie')
@@ -240,7 +239,7 @@ class _TourismDetailState extends State<TourismDetail> {
                             flex: 3,
                             child: Text(
                               MyHelper.returnToString(
-                                  _dataTourismDetail["alamat"]),
+                                  _dataSouvenirDetail["alamat"]),
                               //--- set value
                               style: TextStyle(fontSize: MyFontSize.medium),
                             ),
@@ -267,7 +266,7 @@ class _TourismDetailState extends State<TourismDetail> {
                           Expanded(
                             flex: 3,
                             child: Text(
-                              MyHelper.returnToString(_dataTourismDetail[
+                              MyHelper.returnToString(_dataSouvenirDetail[
                                   "kelurahan"]), //--- set value
                               style: TextStyle(fontSize: MyFontSize.medium),
                             ),
@@ -315,7 +314,7 @@ class _TourismDetailState extends State<TourismDetail> {
                           Expanded(
                             flex: 3,
                             child: Text(
-                              MyHelper.returnToString(_dataTourismDetail[
+                              MyHelper.returnToString(_dataSouvenirDetail[
                                   "no_telp"]), //--- set value
                               style: TextStyle(fontSize: MyFontSize.medium),
                             ),
@@ -323,7 +322,7 @@ class _TourismDetailState extends State<TourismDetail> {
                           InkWell(
                             onTap: () {
                               Clipboard.setData(new ClipboardData(
-                                  text: _dataTourismDetail["no_telp"]));
+                                  text: _dataSouvenirDetail["no_telp"]));
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(SnackBar(
                                 content: Text(MyString.copyNoHp),
@@ -354,7 +353,7 @@ class _TourismDetailState extends State<TourismDetail> {
                             flex: 3,
                             child: Text(
                               MyHelper.returnToString(
-                                  _dataTourismDetail["email"]),
+                                  _dataSouvenirDetail["email"]),
                               //--- set value
                               style: TextStyle(fontSize: MyFontSize.medium),
                             ),
@@ -362,7 +361,7 @@ class _TourismDetailState extends State<TourismDetail> {
                           InkWell(
                             onTap: () {
                               Clipboard.setData(new ClipboardData(
-                                  text: _dataTourismDetail["email"]));
+                                  text: _dataSouvenirDetail["email"]));
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(SnackBar(
                                 content: Text(MyString.copyEmail),
@@ -386,7 +385,7 @@ class _TourismDetailState extends State<TourismDetail> {
       physics: ScrollPhysics(),
       shrinkWrap: true,
       scrollDirection: Axis.vertical,
-      itemCount: _listTourismReview == null ? 0 : _listTourismReview.length,
+      itemCount: _listSouvenirReview == null ? 0 : _listSouvenirReview.length,
       itemBuilder: (context, index) {
         return Container(
           child: Container(
@@ -415,7 +414,7 @@ class _TourismDetailState extends State<TourismDetail> {
                     children: <Widget>[
                       Container(
                         child: Text(
-                          _listTourismReview[index]["data_user"]["name"]
+                          _listSouvenirReview[index]["data_user"]["name"]
                               .toString(), //-- set value
                           style: TextStyle(
                             fontSize: MyFontSize.medium,
@@ -431,7 +430,7 @@ class _TourismDetailState extends State<TourismDetail> {
                       //     allowHalfRating: true,
                       //     starCount: 5,
                       //     rating: MyHelper.returnToDouble(
-                      //         _listTourismReview[index]["rating"]),
+                      //         _listSouvenirReview[index]["rating"]),
                       //     //--- set value
                       //     size: 14.0,
                       //     color: Colors.green,
@@ -442,7 +441,7 @@ class _TourismDetailState extends State<TourismDetail> {
                       ),
                       Text(
                         MyHelper.returnToString(
-                            _listTourismReview[index]["komentar"]),
+                            _listSouvenirReview[index]["komentar"]),
                         //-- set value
                         style: TextStyle(
                           fontSize: MyFontSize.small,
@@ -451,12 +450,12 @@ class _TourismDetailState extends State<TourismDetail> {
                     ],
                   ),
                 ),
-                _listTourismReview[index]["user_id"].toString() ==
+                _listSouvenirReview[index]["user_id"].toString() ==
                         _userId.toString()
                     ? InkWell(
                         onTap: () {
                           deleteTourismReview(
-                              _listTourismReview[index]["id"].toString());
+                              _listSouvenirReview[index]["id"].toString());
                         },
                         child: Icon(
                           Icons.delete,
@@ -478,56 +477,56 @@ class _TourismDetailState extends State<TourismDetail> {
         padding: EdgeInsets.all(0.0),
         children: <Widget>[
           //--- Rating ---
-          // Container(
-          //   color: Colors.white,
-          //   padding: EdgeInsets.all(16.0),
-          //   child: Column(
-          //     crossAxisAlignment: CrossAxisAlignment.stretch,
-          //     children: <Widget>[
-          //       Text(
-          //         MyString.rating,
-          //         style: TextStyle(
-          //           fontSize: MyFontSize.small,
-          //           fontWeight: FontWeight.bold,
-          //         ),
-          //         textAlign: TextAlign.justify,
-          //       ),
-          //       SizedBox(
-          //         height: 8.0,
-          //       ),
-          //       Row(
-          //         children: <Widget>[
-          //           Text(
-          //             _loadingReview
-          //                 ? "-"
-          //                 : MyHelper.returnToDouble(
-          //                         _dataTourismReview["rating_average"])
-          //                     .toStringAsFixed(2),
-          //             style: TextStyle(fontSize: 50),
-          //           ),
-          //           SizedBox(
-          //             width: 20.0,
-          //           ),
-          //           // SmoothStarRating(
-          //           //     allowHalfRating: false,
-          //           //     onRated: (v) {},
-          //           //     starCount: 5,
-          //           //     rating: _loadingReview
-          //           //         ? 0
-          //           //         : MyHelper.returnToDouble(
-          //           //             _dataTourismReview["rating_average"]),
-          //           //     size: 20.0,
-          //           //     color: Colors.green,
-          //           //     borderColor: Colors.green,
-          //           //     spacing: 0.0),
-          //         ],
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          // SizedBox(
-          //   height: 16.0,
-          // ),
+          Container(
+            color: Colors.white,
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Text(
+                  MyString.rating,
+                  style: TextStyle(
+                    fontSize: MyFontSize.small,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.justify,
+                ),
+                SizedBox(
+                  height: 8.0,
+                ),
+                Row(
+                  children: <Widget>[
+                    Text(
+                      _loadingReview
+                          ? "-"
+                          : MyHelper.returnToDouble(
+                                  _dataSouvenirReview["rating_average"])
+                              .toStringAsFixed(2),
+                      style: TextStyle(fontSize: 50),
+                    ),
+                    SizedBox(
+                      width: 20.0,
+                    ),
+                    // SmoothStarRating(
+                    //     allowHalfRating: false,
+                    //     onRated: (v) {},
+                    //     starCount: 5,
+                    //     rating: _loadingReview
+                    //         ? 0
+                    //         : MyHelper.returnToDouble(
+                    //             _dataSouvenirReview["rating_average"]),
+                    //     size: 20.0,
+                    //     color: Colors.green,
+                    //     borderColor: Colors.green,
+                    //     spacing: 0.0),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 16.0,
+          ),
           //--- Comment ---
           Container(
             color: Colors.white,
@@ -535,15 +534,13 @@ class _TourismDetailState extends State<TourismDetail> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                Center(
-                  child: Text(
-                    MyString.comment,
-                    style: TextStyle(
-                      fontSize: MyFontSize.large,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.justify,
+                Text(
+                  MyString.comment,
+                  style: TextStyle(
+                    fontSize: MyFontSize.small,
+                    fontWeight: FontWeight.bold,
                   ),
+                  textAlign: TextAlign.justify,
                 ),
                 SizedBox(
                   height: 8.0,
@@ -591,14 +588,16 @@ class _TourismDetailState extends State<TourismDetail> {
                               shape: MaterialStateProperty.all<
                                   RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24),
+                                  borderRadius: BorderRadius.circular(18.0),
                                 ),
                               ),
                             ),
                             onPressed: () {
                               if (_commentController.text.isEmpty) {
                                 MyHelper.toast(
-                                    context, MyString.dataCannotEmpty);
+                                  context,
+                                  MyString.dataCannotEmpty,
+                                );
                               } else {
                                 MyHelperActivity.auth(() {
                                   createTourismReview();
@@ -641,9 +640,9 @@ class _TourismDetailState extends State<TourismDetail> {
       child: ListView.builder(
           padding: EdgeInsets.all(0.0),
           shrinkWrap: true,
-          itemCount: _listTourismEvent == null ? 0 : _listTourismEvent.length,
+          itemCount: _listSouvenirEvent == null ? 0 : _listSouvenirEvent.length,
           itemBuilder: (BuildContext context, int index) {
-            if (_listTourismEvent == null) {
+            if (_listSouvenirEvent == null) {
               return Container();
             } else {
               return InkWell(
@@ -653,7 +652,7 @@ class _TourismDetailState extends State<TourismDetail> {
                     MaterialPageRoute(
                         builder: (context) => EventDetail(
                               idEvent:
-                                  _listTourismEvent[index]["id"].toString(),
+                                  _listSouvenirEvent[index]["id"].toString(),
                             )),
                   );
                 },
@@ -662,7 +661,7 @@ class _TourismDetailState extends State<TourismDetail> {
                   child: Stack(children: <Widget>[
                     CachedNetworkImage(
                       imageUrl: ApiService.baseUrl2 +
-                          _listTourismEvent[index]["gambar"], //--- set value
+                          _listSouvenirEvent[index]["gambar"], //--- set value
                       placeholder: (context, url) => Center(
                           child: Container(
                         height: 20.0,
@@ -696,7 +695,7 @@ class _TourismDetailState extends State<TourismDetail> {
                           children: <Widget>[
                             Text(
                               MyHelper.returnToString(
-                                  _listTourismEvent[index]["nama"]),
+                                  _listSouvenirEvent[index]["nama"]),
                               //--- set value
                               style: TextStyle(
                                 color: Colors.white,
@@ -710,11 +709,11 @@ class _TourismDetailState extends State<TourismDetail> {
                               height: 4.0,
                             ),
                             Text(
-                              MyHelper.formatShortDate(_listTourismEvent[index]
+                              MyHelper.formatShortDate(_listSouvenirEvent[index]
                                       ["tanggal_mulai"]) +
                                   " s/d " +
                                   MyHelper.formatShortDate(
-                                      _listTourismEvent[index]
+                                      _listSouvenirEvent[index]
                                           ["tanggal_selesai"]),
                               style: TextStyle(
                                 color: Colors.white,
@@ -747,20 +746,22 @@ class _TourismDetailState extends State<TourismDetail> {
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
                   centerTitle: true,
-                  background: _dataTourismDetail == null
+                  background: _dataSouvenirDetail == null
                       ? Container()
                       : CarouselSlider(
-                          options: CarouselOptions(height: double.infinity),
-                          items: _listTourismImage
+                          options: CarouselOptions(
+                            height: double.infinity,
+                          ),
+                          items: _listSouvenirImage
                               .asMap()
                               .map((i, element) => MapEntry(
                                     i,
                                     CachedNetworkImage(
-                                      imageUrl: _listTourismImage.length == 0
+                                      imageUrl: _listSouvenirImage.length == 0
                                           ? "https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png"
                                           : ApiService.baseUrl +
-                                              ApiService.urlImageTourism +
-                                              _listTourismImage[i]["nama"],
+                                              ApiService.urlImageHotel +
+                                              _listSouvenirImage[i]["nama"],
                                       placeholder: (context, url) =>
                                           new CircularProgressIndicator(),
                                       errorWidget: (context, url, error) =>
@@ -786,10 +787,10 @@ class _TourismDetailState extends State<TourismDetail> {
                     ),
                   ),
                 ),
-                title: _dataTourismDetail == null
+                title: _dataSouvenirDetail == null
                     ? Text("")
                     : Text(
-                        _dataTourismDetail["nama"],
+                        _dataSouvenirDetail["nama"],
                         style: TextStyle(color: Colors.white),
                       ),
               ),
@@ -797,7 +798,7 @@ class _TourismDetailState extends State<TourismDetail> {
           },
           body: TabBarView(
             children: [
-              _dataTourismDetail == null ? LayoutLoading() : _fragmentDetail,
+              _dataSouvenirDetail == null ? LayoutLoading() : _fragmentDetail,
               _fragmentReview,
               _fragmentEvent,
             ],
@@ -807,7 +808,7 @@ class _TourismDetailState extends State<TourismDetail> {
     );
   }
 
-  Future<String> showTourismDetail(String id) async {
+  Future<String> showSouvenirDetail(String id) async {
     setState(() {
       _loadingDetail = true;
     });
@@ -815,7 +816,7 @@ class _TourismDetailState extends State<TourismDetail> {
     var param = "/" + id;
 
     var response = await http.get(
-      Uri.parse(ApiService.tourismDetail + param),
+      Uri.parse(ApiService.hotelDetail + param),
       headers: {"Accept": "application/json"},
     );
 
@@ -823,9 +824,9 @@ class _TourismDetailState extends State<TourismDetail> {
       var result = json.decode(response.body);
 
       if (result["status"] == "success") {
-        _dataTourismDetail = result["data"];
-        _listTourismEvent = result["data"]["event"];
-        _listTourismImage = result["data"]["details"];
+        _dataSouvenirDetail = result["data"];
+        _listSouvenirEvent = result["data"]["event"];
+        _listSouvenirImage = result["data"]["details"];
 
         setState(() {
           _loadingDetail = false;
@@ -840,7 +841,7 @@ class _TourismDetailState extends State<TourismDetail> {
     return "Success!";
   }
 
-  Future<String> showTourismReview(
+  Future<String> showSouvenirReview(
       String id, String page, bool clearListParent) async {
     setState(() {
       _loadingReview = true;
@@ -849,7 +850,7 @@ class _TourismDetailState extends State<TourismDetail> {
     var param = "/" + id + "?page=" + page;
 
     var response = await http.get(
-      Uri.parse(ApiService.tourismReviewList + param),
+      Uri.parse(ApiService.hotelReviewList + param),
       headers: {"Accept": "application/json"},
     );
 
@@ -859,7 +860,7 @@ class _TourismDetailState extends State<TourismDetail> {
       var result = json.decode(response.body);
 
       if (result["status"] == "success") {
-        _dataTourismReview = result;
+        _dataSouvenirReview = result;
         data = result["data"]["data"];
 
         if (data.length == 0) {
@@ -868,8 +869,8 @@ class _TourismDetailState extends State<TourismDetail> {
           });
         } else {
           setState(() {
-            if (clearListParent) _listTourismReview.clear();
-            _listTourismReview.addAll(data);
+            if (clearListParent) _listSouvenirReview.clear();
+            _listSouvenirReview.addAll(data);
           });
         }
 
@@ -878,11 +879,9 @@ class _TourismDetailState extends State<TourismDetail> {
         });
       } else {
         MyHelper.toast(context, MyString.msgError);
-        ;
       }
     } else {
       MyHelper.toast(context, MyString.msgError);
-      ;
     }
 
     return "Success!";
@@ -898,10 +897,10 @@ class _TourismDetailState extends State<TourismDetail> {
     var map = new Map<String, dynamic>();
     map["rating"] = _rating.toString();
     map["komentar"] = _commentController.text;
-    map["wisata_id"] = this.widget.id.toString();
+    map["hotel_id"] = this.widget.id.toString();
     map["user_id"] = prefs.getString(MyConstanta.userId);
 
-    var response = await http.post(Uri.parse(ApiService.tourismReviewCreate),
+    var response = await http.post(Uri.parse(ApiService.hotelReviewCreate),
         headers: {
           "Accept": "application/json",
           "Authorization": prefs.getString(MyConstanta.saveToken) ?? ''
@@ -916,10 +915,9 @@ class _TourismDetailState extends State<TourismDetail> {
             gravity: Toast.center);
         _commentController.clear();
         _page = 1;
-        showTourismReview(this.widget.id, "1", true);
+        showSouvenirReview(this.widget.id, "1", true);
       } else {
         MyHelper.toast(context, MyString.msgError);
-        ;
       }
 
       setState(() {
@@ -948,7 +946,7 @@ class _TourismDetailState extends State<TourismDetail> {
     var map = new Map<String, dynamic>();
     map["id"] = idTourismReview;
 
-    var response = await http.post(Uri.parse(ApiService.tourismReviewDelete),
+    var response = await http.post(Uri.parse(ApiService.hotelReviewDelete),
         headers: {
           "Accept": "application/json",
           "Authorization": prefs.getString(MyConstanta.saveToken) ?? ''
@@ -962,9 +960,9 @@ class _TourismDetailState extends State<TourismDetail> {
         MyHelper.toast(context, MyHelper.returnToString(result["message"]),
             gravity: Toast.center);
 
-        _listTourismReview.clear();
+        _listSouvenirReview.clear();
         _page = 1;
-        showTourismReview(this.widget.id, "1", true);
+        showSouvenirReview(this.widget.id, "1", true);
       } else {
         MyHelper.toast(context, MyString.msgError);
       }

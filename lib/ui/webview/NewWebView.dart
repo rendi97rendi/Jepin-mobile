@@ -31,25 +31,40 @@ class _NewWebViewState extends State<NewWebView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: new AppBar(
-        title: Text(widget.title),
-        bottom: PreferredSize(
-            preferredSize: Size.fromHeight(40.0),
-            child: Container(
-              color: MyHelper.hexToColor(MyColor.greySoft),
-              height: 40.0,
-              child: ListView(
-                padding: EdgeInsets.all(8.0),
-                scrollDirection: Axis.horizontal,
-                children: <Widget>[
-                  Center(
-                    child: Text(
-                      widget.breadcrumbs,
-                      style: TextStyle(fontSize: MyFontSize.medium),
-                    ),
-                  ),
-                ],
-              ),
-            )),
+        elevation: 3.0,
+        backgroundColor: Color(0xFFFF9800),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.pop(context, false);
+          },
+        ),
+        title: Text(
+          widget.title,
+          style: TextStyle(
+              fontSize: MyFontSize.large,
+              fontWeight: FontWeight.bold,
+              color: Colors.white),
+        ),
+        // bottom: PreferredSize(
+        //     preferredSize: Size.fromHeight(40.0),
+        //     child: Container(
+        //       color: MyHelper.hexToColor(MyColor.orange),
+        //       height: 40.0,
+        //       child: ListView(
+        //         padding: EdgeInsets.all(8.0),
+        //         scrollDirection: Axis.horizontal,
+        //         children: <Widget>[
+        //           Center(
+        //             child: Text(
+        //               widget.breadcrumbs,
+        //               style: TextStyle(fontSize: MyFontSize.medium),
+        //             ),
+        //           ),
+        //         ],
+        //       ),
+        //     )),
       ),
       body: WebView(
         initialUrl: widget.url,

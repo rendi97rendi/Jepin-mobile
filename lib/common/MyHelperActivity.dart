@@ -18,10 +18,11 @@ class MyHelperActivity {
 
   //--- User ---
 
-  static saveToken(String bearerToken, String idUser) async {
+  static saveToken(String bearerToken, String idUser, String email) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(MyConstanta.saveToken, bearerToken);
     await prefs.setString(MyConstanta.userId, idUser);
+    await prefs.setString(MyConstanta.email, email);
   }
 
   static checkToken() async {
