@@ -6,10 +6,13 @@ import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pontianak_smartcity/api/ApiService.dart';
+import 'package:pontianak_smartcity/api/SPLPDApiId.dart';
+import 'package:pontianak_smartcity/api/SPLPDApiService.dart';
 import 'package:pontianak_smartcity/common/MyColor.dart';
 import 'package:pontianak_smartcity/common/MyFontSize.dart';
 import 'package:pontianak_smartcity/common/MyHelper.dart';
 import 'package:http/http.dart' as http;
+import 'package:pontianak_smartcity/common/MyHttp.dart';
 import 'package:pontianak_smartcity/common/MyShimmer.dart';
 import 'package:pontianak_smartcity/common/MyString.dart';
 import 'package:pontianak_smartcity/ui/dashboard/Menu.dart';
@@ -51,7 +54,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String _logoApps = ApiService.imagePlaceholder;
+  final MyHttp myHttp = MyHttp(); // ! Initial Helper Http
+  final String _imgPlaceholder = SPLPDApiService.imagePlaceholder;
+  String _logoApps = SPLPDApiService.imagePlaceholder;
+
   @override
   void initState() {
     showCarousel();
@@ -60,7 +66,6 @@ class _HomeScreenState extends State<HomeScreen> {
     showNews();
     super.initState();
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -100,13 +105,13 @@ class _HomeScreenState extends State<HomeScreen> {
               items: listCarousel.length == 0
                   ? <Widget>[
                       _ViewHolderCarousel(
-                        image: ApiService.imagePlaceholder,
+                        image: _imgPlaceholder,
                         title: "Pontianak Kote Tercinte",
                         subtitle:
                             "Kecik telapak tangan, Nyirok pon kamek tadahkan",
                       ),
                       _ViewHolderCarousel(
-                        image: ApiService.imagePlaceholder,
+                        image: _imgPlaceholder,
                         title: "Pontianak Smartcity",
                         subtitle: "Awak datang, kamek sambot",
                       ),
@@ -464,48 +469,36 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<String> showCarousel() async {
-    var response = await http.get(Uri.parse(ApiService.carousel),
-        headers: {"Accept": "application/json"});
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
+    try {
+      final result =
+          await myHttp.get(SPLPDApiService.carousel, SPLPDApiId.carouselApiId);
       setState(() {
-        var result = json.decode(response.body);
-
         if (result["status"] == "success") {
           listCarousel = result["data"];
         }
       });
-    } else {
-      MyHelper.toast(context, MyString.msgError);
-      ;
+    } catch (e) {
+      MyHelper.toast(context, e.toString());
     }
-
     return "Success!";
   }
 
   Future<String> showSetting() async {
-    var response = await http.get(Uri.parse(ApiService.setting),
-        headers: {"Accept": "application/json"});
+    final result =
+        await myHttp.get(SPLPDApiService.setting, SPLPDApiId.settingApiId);
+    try {
+      if (result["status"] == "success") {
+        _dataSetting = result["data"];
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      setState(() {
-        var result = json.decode(response.body);
-
-        if (result["status"] == "success") {
-          _dataSetting = result["data"];
-
-          setState(() {
-            _dataSetting == null
-                ? _logoApps = ApiService.imagePlaceholder
-                : _logoApps = ApiService.baseUrl2 + _dataSetting["logo_web"];
-          });
-        }
-      });
-    } else {
+        setState(() {
+          _dataSetting == null
+              ? _logoApps
+              : _logoApps = _dataSetting["url_logo_apps"];
+        });
+      }
+    } catch (e) {
       MyHelper.toast(context, MyString.msgError);
-      ;
     }
-
     return "Success!";
   }
 
@@ -514,23 +507,17 @@ class _HomeScreenState extends State<HomeScreen> {
       _isLoading = true;
     });
 
-    var response = await http.get(
-      Uri.parse(ApiService.latest),
-      headers: {"Accept": "application/json"},
-    );
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
+    final result = await myHttp.get(
+        SPLPDApiService.beritaTerbaru, SPLPDApiId.beritaTerbaruApiId);
+    try {
       setState(() {
-        var result = json.decode(response.body);
         if (result["status"] == true) {
           _dataBerita = result["data"];
+          // print(_dataBerita);
         }
-
-        // print(_dataBerita);
-
         _isLoading = false;
       });
-    } else {
+    } catch (e) {
       MyHelper.toast(context, MyString.msgError);
       ;
     }
@@ -543,12 +530,10 @@ class _HomeScreenState extends State<HomeScreen> {
       _isLoading = true;
     });
 
-    var response = await http.get(Uri.parse(ApiService.homeMenu),
-        headers: {"Accept": "application/json"});
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
+    final result = await myHttp.get(
+        SPLPDApiService.menuSmartcity, SPLPDApiId.menuSmartcityApiId);
+    try {
       setState(() {
-        var result = json.decode(response.body);
         List menu = [];
         if (result["status"] == "success") {
           menu = result["data"];
@@ -572,9 +557,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
         _isLoading = false;
       });
-    } else {
+    } catch (e) {
       MyHelper.toast(context, MyString.msgError);
-      ;
     }
 
     return "Success!";
@@ -600,11 +584,12 @@ class _ViewHolderCarousel extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => NewWebView(
-                      title: title,
-                      url: url!,
-                      breadcrumbs: '',
-                    )),
+              builder: (context) => NewWebView(
+                title: title,
+                url: url!,
+                breadcrumbs: '',
+              ),
+            ),
           );
         }
       },
@@ -645,7 +630,7 @@ class _ViewHolderCarousel extends StatelessWidget {
                 child: Column(
                   children: <Widget>[
                     Text(
-                      title ?? "",
+                      title,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -656,7 +641,7 @@ class _ViewHolderCarousel extends StatelessWidget {
                       maxLines: 2,
                     ),
                     Text(
-                      subtitle ?? "",
+                      subtitle,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 12,
@@ -675,7 +660,7 @@ class _ViewHolderCarousel extends StatelessWidget {
   }
 }
 
-// More 
+// More
 class MenuItem extends StatelessWidget {
   final String title;
   final String icon;
@@ -727,11 +712,12 @@ class MenuItem extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => Menu(
-                        title: title,
-                        data: _dataMenu,
-                        dataList: _dataMenu[this.index]["list"],
-                      )),
+                builder: (context) => Menu(
+                  title: title,
+                  data: _dataMenu,
+                  dataList: _dataMenu[this.index]["list"],
+                ),
+              ),
             );
           }
         }
@@ -752,7 +738,6 @@ class MenuItem extends StatelessWidget {
     );
   }
 }
-
 
 class MenuSmartItem extends StatelessWidget {
   final String title;
@@ -779,21 +764,23 @@ class MenuSmartItem extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => NewWebView(
-                        title: _dataSmartMenu[index]["menu"]["label"],
-                        url: _dataSmartMenu[index]["menu"]["link"],
-                        breadcrumbs: _dataSmartMenu[index]["menu"]["label"],
-                      )),
+                builder: (context) => NewWebView(
+                  title: _dataSmartMenu[index]["menu"]["label"],
+                  url: _dataSmartMenu[index]["menu"]["link"],
+                  breadcrumbs: _dataSmartMenu[index]["menu"]["label"],
+                ),
+              ),
             );
           } else {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => Menu(
-                        title: title,
-                        data: _dataSmartMenu,
-                        dataList: _dataSmartMenu[this.index]["list"],
-                      )),
+                builder: (context) => Menu(
+                  title: title,
+                  data: _dataSmartMenu,
+                  dataList: _dataSmartMenu[this.index]["list"],
+                ),
+              ),
             );
           }
         }

@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:pontianak_smartcity/api/ApiService.dart';
+import 'package:pontianak_smartcity/api/SPLPDApiId.dart';
+import 'package:pontianak_smartcity/api/SPLPDApiService.dart';
 import 'package:pontianak_smartcity/common/MyHelper.dart';
 import 'package:pontianak_smartcity/common/MyHelperActivity.dart';
+import 'package:pontianak_smartcity/common/MyHttp.dart';
 import 'package:pontianak_smartcity/common/MyString.dart';
 import 'package:pontianak_smartcity/ui/dashboard/Dashboard.dart';
 import 'package:pontianak_smartcity/ui/master_layout/LayoutLoading.dart';
@@ -26,6 +29,8 @@ class _UserLoginState extends State<UserLogin> {
   final _passwordController = TextEditingController();
   var _isLoading = false;
   var _passwordVisible = false;
+
+  final MyHttp myHttp = MyHttp(); // ! Initial Helper Http
 
   @override
   Widget build(BuildContext context) {
@@ -176,11 +181,6 @@ class _UserLoginState extends State<UserLogin> {
     );
 
     return Scaffold(
-      // appBar: AppBar(
-      //   elevation: 3.0,
-      //   title: Text("Login"),
-      //   centerTitle: true,
-      // ),
       backgroundColor: Colors.white,
       body: Center(
         child: ListView(
@@ -201,12 +201,13 @@ class _UserLoginState extends State<UserLogin> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => NewWebView(
-                                title: 'Kebijakan Privasi',
-                                url:
-                                    'https://jepin.pontianak.go.id/p/5-kebijakan-privasi',
-                                breadcrumbs: 'Kebijakan Privasi',
-                              )),
+                        builder: (context) => NewWebView(
+                          title: 'Kebijakan Privasi',
+                          url:
+                              'https://jepin.pontianak.go.id/p/5-kebijakan-privasi',
+                          breadcrumbs: 'Kebijakan Privasi',
+                        ),
+                      ),
                     );
                   },
                   child: Text(
@@ -218,18 +219,9 @@ class _UserLoginState extends State<UserLogin> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => UserResetPassword()),
+                      MaterialPageRoute(
+                          builder: (context) => UserResetPassword()),
                     );
-
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //       builder: (context) => NewWebView(
-                    //             title: 'Reset Kata Sandi',
-                    //             url: 'https://jepin.pontianak.go.id/forgot-password',
-                    //             breadcrumbs: 'Reset Kata Sandi',
-                    //           )),
-                    // );
                   },
                   child: Text('Reset Kata Sandi',
                       style: TextStyle(fontSize: 13, color: Colors.blue),
@@ -254,20 +246,21 @@ class _UserLoginState extends State<UserLogin> {
     String _bearerToken;
     String _idUser;
     String _email = _emailController.text;
+    String _password = _passwordController.text;
 
-    var map = new Map<String, dynamic>();
-    map["email"] = _email;
-    map["password"] = _passwordController.text;
+    var body = {
+      "api_id ": SPLPDApiId.loginApiId,
+      "email": _email,
+      "password": _password,
+    };
 
-    var response = await http.post(Uri.parse(ApiService.userLogin),
-        headers: {"Accept": "application/json"}, body: map);
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      var result = json.decode(response.body);
-
-      if (result["status"] == "success") {
-        _bearerToken = "Bearer " + result["data"]["token"];
-        _idUser = result["data"]["id"].toString();
+    final result =
+        await myHttp.post(SPLPDApiService.login, SPLPDApiId.loginApiId, body);
+    try {
+      final response = result['data'];
+      if (response["status"] == "success") {
+        _bearerToken = "Bearer " + response['data']["token"];
+        _idUser = response['data']["id"].toString();
 
         MyHelperActivity.saveToken(_bearerToken, _idUser, _email);
 
@@ -281,9 +274,8 @@ class _UserLoginState extends State<UserLogin> {
         MyHelper.toast(context, MyString.usernameIncorrect,
             gravity: Toast.center);
       }
-    } else {
-      MyHelper.toast(context, MyString.usernameIncorrect,
-          gravity: Toast.center);
+    } catch (e) {
+      MyHelper.toast(context, MyString.msgError, gravity: Toast.center);
     }
 
     setState(() {

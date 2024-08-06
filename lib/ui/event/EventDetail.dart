@@ -7,9 +7,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:pontianak_smartcity/api/ApiService.dart';
+import 'package:pontianak_smartcity/api/SPLPDApiId.dart';
+import 'package:pontianak_smartcity/api/SPLPDApiService.dart';
+import 'package:pontianak_smartcity/common/MyColor.dart';
 import 'package:pontianak_smartcity/common/MyCommon.dart';
 import 'package:pontianak_smartcity/common/MyFontSize.dart';
 import 'package:pontianak_smartcity/common/MyHelper.dart';
+import 'package:pontianak_smartcity/common/MyHttp.dart';
 import 'package:pontianak_smartcity/common/MyString.dart';
 import 'package:pontianak_smartcity/ui/culinary/CulinaryDetail.dart';
 import 'package:pontianak_smartcity/ui/hotel/HotelDetail.dart';
@@ -28,9 +32,13 @@ class EventDetail extends StatefulWidget {
 class _EventDetailState extends State<EventDetail> {
   // --- variable ---
   var _dataEventDetail;
-  var _urlTempImg;
+  var _urlTempImg = SPLPDApiService.imagePlaceholder;
   List _listEventLocation = [];
   bool _loadingEventDetail = true;
+  final MyHttp myHttp = MyHttp(); // ! Initial Helper Http
+  final String _imgPlaceholder = SPLPDApiService.imagePlaceholder;
+  PageController _scrollController =
+      PageController(initialPage: 0, keepPage: true);
 
   @override
   void initState() {
@@ -40,15 +48,8 @@ class _EventDetailState extends State<EventDetail> {
 
   @override
   Widget build(BuildContext context) {
-    if (_dataEventDetail["gambar"] == null || _dataEventDetail["gambar"] == 'null' || _dataEventDetail["gambar"]?.isEmpty) {
-      _urlTempImg = ApiService.imagePlaceholder;
-    } else {
-      _urlTempImg = ApiService.baseUrl2 + _dataEventDetail["gambar"];
-    }
     final _widgetImage = CachedNetworkImage(
-      imageUrl: _loadingEventDetail
-          ? ApiService.imagePlaceholder
-          : _urlTempImg,
+      imageUrl: _urlTempImg,
       placeholder: (context, url) => Center(
           child: Container(
         height: 20.0,
@@ -60,8 +61,6 @@ class _EventDetailState extends State<EventDetail> {
       ),
       fit: BoxFit.fill,
     );
-//      fit: BoxFit.fill,
-//    );
 
     final _widgetHeader = Container(
       color: Colors.white,
@@ -197,7 +196,7 @@ class _EventDetailState extends State<EventDetail> {
                                           child: Stack(
                                             children: <Widget>[
                                               CachedNetworkImage(
-                                                imageUrl: ApiService.baseUrl +
+                                                imageUrl:
                                                     _listEventLocation[index]
                                                         ["detail"]["nama"],
                                                 placeholder: (context, url) =>
@@ -259,21 +258,57 @@ class _EventDetailState extends State<EventDetail> {
 
     return Scaffold(
       appBar: AppBar(
-        elevation: 3.0,
-        title: Text(MyString.event),
+        elevation: 3,
+        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: MyColor.colorAppbar,
+        title: Text(
+          MyString.event.toUpperCase(),
+          style: TextStyle(
+            fontSize: MyFontSize.large,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
         centerTitle: true,
       ),
+      floatingActionButton: Container(
+        margin: EdgeInsets.only(right: 10, bottom: 30),
+        height: 52.0,
+        width: 52.0,
+        child: FittedBox(
+          child: FloatingActionButton(
+            shape: CircleBorder(),
+            backgroundColor: Colors.amber,
+            splashColor: Colors.orange[400],
+            onPressed: () {
+              setState(() {
+                _scrollController.animateToPage(0,
+                    duration: Duration(milliseconds: 1000),
+                    curve: Curves.fastOutSlowIn);
+              });
+            },
+            child: Icon(
+              Icons.arrow_upward,
+              color: Colors.white,
+            ),
+            // elevation: 5.0,
+          ),
+        ),
+      ),
       backgroundColor: Colors.indigo[50],
-      body: SingleChildScrollView(
-          child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          _widgetImage,
-          _widgetHeader,
-          _widgetContent,
-          _widgetLocation,
-        ],
-      )),
+      body: _loadingEventDetail
+          ? LayoutLoading()
+          : SingleChildScrollView(
+              controller: _scrollController,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  _widgetImage,
+                  _widgetHeader,
+                  _widgetContent,
+                  _widgetLocation,
+                ],
+              )),
     );
   }
 
@@ -283,30 +318,30 @@ class _EventDetailState extends State<EventDetail> {
       _loadingEventDetail = true;
     });
 
-    var param = "/" + idEvent;
-
-    var response = await http.get(
-      Uri.parse(ApiService.eventDetail + param),
-      headers: {"Accept": "application/json"},
-    );
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      var result = json.decode(response.body);
-
+    final result = await myHttp.get(
+        '${SPLPDApiService.detailEvent}/$idEvent', SPLPDApiId.detailEventApiId);
+    try {
       if (result["status"] == "success") {
         _dataEventDetail = result["data"];
+
+        if (_dataEventDetail["url_gambar"] == null ||
+            _dataEventDetail["url_gambar"] == 'null' ||
+            _dataEventDetail["url_gambar"]?.isEmpty) {
+          _dataEventDetail["gambar"] = _imgPlaceholder;
+        } else {
+          _dataEventDetail["gambar"] = _dataEventDetail["url_gambar"];
+        }
         _listEventLocation = result["data"]["lokasi_event"];
 
         setState(() {
+          _urlTempImg = _dataEventDetail["gambar"];
           _loadingEventDetail = false;
         });
       } else {
         MyHelper.toast(context, MyString.msgError);
-        ;
       }
-    } else {
+    } catch (e) {
       MyHelper.toast(context, MyString.msgError);
-      ;
     }
 
     return "Success!";

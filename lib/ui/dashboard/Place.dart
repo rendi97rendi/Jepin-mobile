@@ -2,8 +2,11 @@ import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:pontianak_smartcity/api/SPLPDApiId.dart';
+import 'package:pontianak_smartcity/api/SPLPDApiService.dart';
 import 'package:pontianak_smartcity/common/MyColor.dart';
-import 'package:pontianak_smartcity/ui/culinary/CulinaryList.dart';
+import 'package:pontianak_smartcity/common/MyHttp.dart';
+import 'package:pontianak_smartcity/ui/culinary/RestoranList.dart';
 import 'package:pontianak_smartcity/ui/hotel/HotelList.dart';
 import 'package:pontianak_smartcity/ui/souvenir/SouvenirList.dart';
 import 'package:pontianak_smartcity/ui/tourism/TourismList.dart';
@@ -30,8 +33,11 @@ class Place extends StatefulWidget {
 
 class _PlaceState extends State<Place> {
   // --- variable ---
-  List _listEvent = [];
+  List _eventList = [];
   bool _loadingEvent = true;
+
+  final MyHttp myHttp = MyHttp(); // ! Initial Helper Http
+  final String _imgPlaceholder = SPLPDApiService.imagePlaceholder;
 
   //--- method ---
   Future<String> showEvent() async {
@@ -39,28 +45,21 @@ class _PlaceState extends State<Place> {
       _loadingEvent = true;
     });
 
-    var response = await http.get(
-      Uri.parse(ApiService.event),
-      headers: {"Accept": "application/json"},
-    );
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      var result = json.decode(response.body);
-
+    final result = await myHttp.get(
+        SPLPDApiService.daftarEvent, SPLPDApiId.daftarEventApiId);
+    try {
       if (result["status"] == "success") {
         inspect(result['data']['data']);
-        _listEvent = result["data"]['data'];
+        _eventList = result["data"]['data'];
 
         setState(() {
           _loadingEvent = false;
         });
       } else {
         MyHelper.toast(context, MyString.msgError);
-        ;
       }
-    } else {
+    } catch (e) {
       MyHelper.toast(context, MyString.msgError);
-      ;
     }
 
     return "Success!";
@@ -71,33 +70,37 @@ class _PlaceState extends State<Place> {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => TourismList(
-                  title: _menuTitle[index],
-                )),
+          builder: (context) => TourismList(
+            title: _menuTitle[index],
+          ),
+        ),
       );
     } else if (index == 1) {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => HotelList(
-                  title: _menuTitle[index],
-                )),
+          builder: (context) => HotelList(
+            title: _menuTitle[index],
+          ),
+        ),
       );
     } else if (index == 2) {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => CulinaryList(
-                  title: _menuTitle[index],
-                )),
+          builder: (context) => RestoranList(
+            title: _menuTitle[index],
+          ),
+        ),
       );
     } else if (index == 3) {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => SouvenirList(
-                  title: _menuTitle[index],
-                )),
+          builder: (context) => SouvenirList(
+            title: _menuTitle[index],
+          ),
+        ),
       );
       // showDialog(
       //   context: context,
@@ -143,157 +146,158 @@ class _PlaceState extends State<Place> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Divider(),
-        (_listEvent.length == 0)
+        (_eventList.length == 0)
             ? Container()
             : Container(
                 height: 160.0,
                 child: ListView.builder(
-                    padding: EdgeInsets.all(0.0),
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _listEvent == null ? 0 : _listEvent.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      if (_listEvent == null) {
-                        return Container();
+                  padding: EdgeInsets.all(0.0),
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _eventList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    if (_eventList.length == 0) {
+                      return Container();
+                    } else {
+                      if (_eventList[index]["url_gambar"] == null ||
+                          _eventList[index]["url_gambar"] == 'null' ||
+                          _eventList[index]["url_gambar"]?.isEmpty) {
+                        _eventList[index]["gambar"] = _imgPlaceholder;
                       } else {
-                        if (_listEvent[index]["gambar"] == null ||
-                            _listEvent[index]["gambar"] == 'null' ||
-                            _listEvent[index]["gambar"]?.isEmpty) {
-                          _listEvent[index]["gambar"] =
-                              ApiService.imagePlaceholder;
-                        } else {
-                          _listEvent[index]["gambar"] =
-                              ApiService.baseUrl2 + _listEvent[index]["gambar"];
-                        }
-                        return InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => EventDetail(
-                                        idEvent:
-                                            _listEvent[index]["id"].toString(),
-                                      )),
-                            );
-                          },
-                          child: Container(
-                            margin: EdgeInsets.all(8.0),
-                            child: Stack(children: <Widget>[
-                              Container(
-                                width: 240.0,
-                                child: CachedNetworkImage(
-                                  imageUrl: _listEvent[index]
-                                      ["gambar"], //--- set value
-                                  placeholder: (context, url) => Center(
-                                      child: Container(
-                                    height: 20.0,
-                                    width: 20.0,
-                                    child: CircularProgressIndicator(),
-                                  )),
-                                  errorWidget: (context, url, error) => Center(
-                                    // child: Icon(Icons.error),
-                                    child: CachedNetworkImage(
-                                      imageUrl: ApiService
-                                          .imagePlaceholder, //--- set value
-                                      placeholder: (context, url) => Center(
-                                          child: Container(
-                                        height: 20.0,
-                                        width: 20.0,
-                                        child: CircularProgressIndicator(),
-                                      )),
-                                      errorWidget: (context, url, error) =>
-                                          Center(
-                                        child: Icon(Icons.error),
-                                      ),
-                                      width: 240.0,
-                                      height: 160.0,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  width: 240.0,
-                                  height: 160.0,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 0.0,
-                                left: 0.0,
-                                right: 0.0,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Color.fromARGB(200, 0, 0, 0),
-                                        Color.fromARGB(0, 0, 0, 0)
-                                      ],
-                                      begin: Alignment.bottomCenter,
-                                      end: Alignment.topCenter,
-                                    ),
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 10.0, horizontal: 20.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: <Widget>[
-                                      Text(
-                                        MyHelper.returnToString(
-                                            _listEvent[index]
-                                                ["nama"]), //--- set value
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: MyFontSize.medium,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                        maxLines: 2,
-                                      ),
-                                      SizedBox(
-                                        height: 4.0,
-                                      ),
-                                      Text(
-                                        MyHelper.formatShortDate(
-                                                _listEvent[index]
-                                                    ["tanggal_mulai"]) +
-                                            " s/d " +
-                                            MyHelper.formatShortDate(
-                                                _listEvent[index]
-                                                    ["tanggal_selesai"]),
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: MyFontSize.small,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                        maxLines: 1,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                top: 4.0,
-                                right: 4.0,
-                                child: Container(
-                                    padding:
-                                        EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
-                                    decoration: BoxDecoration(
-                                        color: MyHelper.hexToColor("#4281f5"),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(8.0))),
-                                    child: Center(
-                                      child: Text(
-                                        "Event",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: MyFontSize.small),
-                                      ),
-                                    )),
-                              )
-                            ]),
-                          ),
-                        );
+                        _eventList[index]["gambar"] =
+                            _eventList[index]["url_gambar"];
                       }
-                    }),
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EventDetail(
+                                idEvent: _eventList[index]["id"].toString(),
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          margin: EdgeInsets.all(8.0),
+                          child: Stack(children: <Widget>[
+                            Container(
+                              width: 240.0,
+                              child: CachedNetworkImage(
+                                imageUrl: _eventList[index]
+                                    ["gambar"], //--- set value
+                                placeholder: (context, url) => Center(
+                                    child: Container(
+                                  height: 20.0,
+                                  width: 20.0,
+                                  child: CircularProgressIndicator(),
+                                )),
+                                errorWidget: (context, url, error) => Center(
+                                  // child: Icon(Icons.error),
+                                  child: CachedNetworkImage(
+                                    imageUrl: ApiService
+                                        .imagePlaceholder, //--- set value
+                                    placeholder: (context, url) => Center(
+                                        child: Container(
+                                      height: 20.0,
+                                      width: 20.0,
+                                      child: CircularProgressIndicator(),
+                                    )),
+                                    errorWidget: (context, url, error) =>
+                                        Center(
+                                      child: Icon(Icons.error),
+                                    ),
+                                    width: 240.0,
+                                    height: 160.0,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                width: 240.0,
+                                height: 160.0,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0.0,
+                              left: 0.0,
+                              right: 0.0,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Color.fromARGB(200, 0, 0, 0),
+                                      Color.fromARGB(0, 0, 0, 0)
+                                    ],
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
+                                  ),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 10.0, horizontal: 20.0),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: <Widget>[
+                                    Text(
+                                      MyHelper.returnToString(_eventList[index]
+                                          ["nama"]), //--- set value
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: MyFontSize.medium,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                      maxLines: 2,
+                                    ),
+                                    SizedBox(
+                                      height: 4.0,
+                                    ),
+                                    Text(
+                                      MyHelper.formatShortDate(_eventList[index]
+                                              ["tanggal_mulai"]) +
+                                          " s/d " +
+                                          MyHelper.formatShortDate(
+                                              _eventList[index]
+                                                  ["tanggal_selesai"]),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: MyFontSize.small,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: 4.0,
+                              right: 4.0,
+                              child: Container(
+                                padding:
+                                    EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
+                                decoration: BoxDecoration(
+                                  color: MyHelper.hexToColor("#4281f5"),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8.0)),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Event",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: MyFontSize.small,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],),
+                        ),
+                      );
+                    }
+                  },
+                ),
               ),
       ],
     );
@@ -329,9 +333,10 @@ class _PlaceState extends State<Place> {
         title: Text(
           MyString.place.toUpperCase(),
           style: TextStyle(
-              fontSize: MyFontSize.large,
-              fontWeight: FontWeight.bold,
-              color: Colors.white),
+            fontSize: MyFontSize.large,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       ),
       body: Column(

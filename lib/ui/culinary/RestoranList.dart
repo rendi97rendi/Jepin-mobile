@@ -11,23 +11,23 @@ import 'package:pontianak_smartcity/master_layout/MyLayoutCarousel.dart';
 import 'package:pontianak_smartcity/master_layout/MyLayoutGridView.dart';
 import 'package:pontianak_smartcity/master_layout/widgets/InputCari.dart';
 import 'package:pontianak_smartcity/master_layout/widgets/ScrollToTop.dart';
-import 'package:pontianak_smartcity/ui/hotel/HotelDetail.dart';
+import 'package:pontianak_smartcity/ui/culinary/CulinaryDetail.dart';
 import 'package:pontianak_smartcity/ui/master_layout/LayoutLoading.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class HotelList extends StatefulWidget {
+class RestoranList extends StatefulWidget {
   final String title;
-  const HotelList({Key? key, required this.title}) : super(key: key);
+  const RestoranList({Key? key, required this.title}) : super(key: key);
 
   @override
-  _HotelListState createState() => _HotelListState();
+  _RestoranListState createState() => _RestoranListState();
 }
 
-class _HotelListState extends State<HotelList> {
+class _RestoranListState extends State<RestoranList> {
   // --- variable ---
   String _category = "0";
   List _listDataCategory = [];
-  var _loadingHotelCategory = true;
+  var _loadingRestoranCategory = true;
 
   List _listCarousel = [];
   List _listData = [];
@@ -52,7 +52,7 @@ class _HotelListState extends State<HotelList> {
       initialRefresh: true,
     );
 
-    hotelCategory();
+    restoranCategory();
     showData(1, "0", _category, true);
 
     super.initState();
@@ -115,7 +115,7 @@ class _HotelListState extends State<HotelList> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => HotelDetail(
+        builder: (context) => CulinaryDetail(
           id: item["id"].toString(),
         ),
       ),
@@ -214,8 +214,8 @@ class _HotelListState extends State<HotelList> {
 
     var param = "/${page.toString()}/$search/$filter";
 
-    final result = await myHttp.get(SPLPDApiService.daftarPenginapan,
-        SPLPDApiId.daftarPenginapanApiId, param);
+    final result = await myHttp.get(SPLPDApiService.daftarRestoran,
+        SPLPDApiId.daftarRestoranApiId, param);
 
     List data = [];
     try {
@@ -252,13 +252,13 @@ class _HotelListState extends State<HotelList> {
     return "Success!";
   }
 
-  Future<String> hotelCategory() async {
+  Future<String> restoranCategory() async {
     setState(() {
-      _loadingHotelCategory = true;
+      _loadingRestoranCategory = true;
     });
 
     final result = await myHttp.get(
-        SPLPDApiService.kategoriPenginapan, SPLPDApiId.kategoriPenginapanApiId);
+        SPLPDApiService.kategoriRestoran, SPLPDApiId.kategoriRestoranApiId);
 
     try {
       if (result["status"] == "success") {
@@ -271,7 +271,7 @@ class _HotelListState extends State<HotelList> {
     }
 
     setState(() {
-      _loadingHotelCategory = false;
+      _loadingRestoranCategory = false;
     });
 
     return "Success!";

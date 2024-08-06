@@ -4,7 +4,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:pontianak_smartcity/api/ApiService.dart';
+import 'package:pontianak_smartcity/api/SPLPDApiId.dart';
+import 'package:pontianak_smartcity/api/SPLPDApiService.dart';
 import 'package:pontianak_smartcity/common/MyHelper.dart';
+import 'package:pontianak_smartcity/common/MyHttp.dart';
 import 'package:pontianak_smartcity/common/MyString.dart';
 import 'package:pontianak_smartcity/ui/food_info/FoodInfo.dart';
 import 'package:pontianak_smartcity/ui/search/Search.dart';
@@ -38,7 +41,9 @@ class SmartCity extends StatefulWidget {
 }
 
 class _SmartCityState extends State<SmartCity> {
-  String _logoApps = ApiService.imagePlaceholder;
+  final MyHttp myHttp = MyHttp(); // ! Initial Helper Http
+  final String _imgPlaceholder = SPLPDApiService.imagePlaceholder;
+  String _logoApps = SPLPDApiService.imagePlaceholder;
 
   @override
   void initState() {
@@ -97,12 +102,12 @@ class _SmartCityState extends State<SmartCity> {
         items: listCarousel.length == 0
             ? <Widget>[
                 _ViewHolderCarousel(
-                  image: ApiService.imagePlaceholder,
+                  image: _imgPlaceholder,
                   title: "Pontianak Kote Tercinte",
                   subtitle: "Kecik telapak tangan, Nyirok pon kamek tadahkan",
                 ),
                 _ViewHolderCarousel(
-                  image: ApiService.imagePlaceholder,
+                  image: _imgPlaceholder,
                   title: "Pontianak Smartcity",
                   subtitle: "Awak datang, kamek sambot",
                 ),
@@ -241,49 +246,37 @@ class _SmartCityState extends State<SmartCity> {
     );
   }
 
-  Future<String> showSetting() async {
-    var response = await http.get(Uri.parse(ApiService.setting),
-        headers: {"Accept": "application/json"});
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      setState(() {
-        var result = json.decode(response.body);
-
-        if (result["status"] == "success") {
-          _dataSetting = result["data"];
-
-          setState(() {
-            _dataSetting == null
-                ? _logoApps = ApiService.imagePlaceholder
-                : _logoApps = ApiService.baseUrl2 + _dataSetting["logo_web"];
-          });
-        }
-      });
-    } else {
-      MyHelper.toast(context, MyString.msgError);
-      ;
-    }
-
-    return "Success!";
-  }
-
   Future<String> showCarousel() async {
-    var response = await http.get(Uri.parse(ApiService.carousel),
-        headers: {"Accept": "application/json"});
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
+    try {
+      final result =
+          await myHttp.get(SPLPDApiService.carousel, SPLPDApiId.carouselApiId);
       setState(() {
-        var result = json.decode(response.body);
-
         if (result["status"] == "success") {
           listCarousel = result["data"];
         }
       });
-    } else {
-      MyHelper.toast(context, MyString.msgError);
-      ;
+    } catch (e) {
+      MyHelper.toast(context, e.toString());
     }
+    return "Success!";
+  }
 
+  Future<String> showSetting() async {
+    final result =
+        await myHttp.get(SPLPDApiService.setting, SPLPDApiId.settingApiId);
+    try {
+      if (result["status"] == "success") {
+        _dataSetting = result["data"];
+
+        setState(() {
+          _dataSetting == null
+              ? _logoApps
+              : _logoApps = _dataSetting["url_logo_apps"];
+        });
+      }
+    } catch (e) {
+      MyHelper.toast(context, MyString.msgError);
+    }
     return "Success!";
   }
 
@@ -292,22 +285,18 @@ class _SmartCityState extends State<SmartCity> {
       _isLoading = true;
     });
 
-    var response = await http.get(Uri.parse(ApiService.homeMenu),
-        headers: {"Accept": "application/json"});
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
+    final result = await myHttp.get(
+        SPLPDApiService.menuSmartcity, SPLPDApiId.menuSmartcityApiId);
+    try {
       setState(() {
-        var result = json.decode(response.body);
-
         if (result["status"] == "success") {
           _dataMenu = result["data"];
         }
 
         _isLoading = false;
       });
-    } else {
+    } catch (e) {
       MyHelper.toast(context, MyString.msgError);
-      ;
     }
 
     return "Success!";
