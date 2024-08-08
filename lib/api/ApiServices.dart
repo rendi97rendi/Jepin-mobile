@@ -47,7 +47,7 @@ class ApiServices {
     static const String daftarEvent = baseJepinApi + "event"; //? Method GET
     static const String detailEvent = baseJepinApi + "event/"; //? Method GET, Param=id => Endpoint/{id}
     // ! WISATA
-    static const String daftartWisata = baseJepinApi + "wisata"; //? Method GET, Param=page/search => Endpoint/{page/search}
+    static const String daftarWisata = baseJepinApi + "wisata"; //? Method GET, Param=page/search => Endpoint/{page/search}
     static const String kategoriWisata = baseJepinApi + "wisata/kategori"; //? Method GET
     static const String detailWisata = baseJepinApi + "wisata"; //? Method GET, Param=id => Endpoint/{id}
     static const String gambarWisata = "/uploads/infoWisata/"; //? Method GET, Param=nama-gambar => Endpoint/{nama-gambar}
@@ -70,6 +70,14 @@ class ApiServices {
     static const String penilaianRestoran = baseJepinApi + "nilai-restoran"; //? Method GET, Param=id => Endpoint/{id}
     static const String tambahPenilaianRestoran = baseJepinApi + "tambah-nilai-restoran"; //? Method POST, Param body=rating, komentar, wisata_id, user_id
     static const String hapusPenilaianRestoran = baseJepinApi + "hapus-nilai-restoran"; //? Method POST, Param body=id
+    // ! OLEH-OLEH
+    static const String daftarOlehOleh = baseJepinApi + "oleh-oleh"; //? Method GET, Param=page/search => Endpoint/{page/search}
+    static const String kategoriOlehOleh = baseJepinApi + "oleh-oleh/kategori"; //? Method GET
+    static const String detailOlehOleh = baseJepinApi + "oleh-oleh"; //? Method GET, Param=id => Endpoint/{id}
+    static const String gambarOlehOleh = "/uploads/infoOlehOleh/"; //? Method GET, Param=nama-gambar => Endpoint/{nama-gambar}
+    static const String penilaianOlehOleh = baseJepinApi + "oleh-oleh/nilai"; //? Method GET, Param=id => Endpoint/{id}
+    static const String tambahPenilaianOlehOleh = baseJepinApi + "oleh-oleh/tambah-nilai"; //? Method POST, Param body=rating, komentar, wisata_id, user_id
+    static const String hapusPenilaianOlehOleh = baseJepinApi + "oleh-oleh/hapus-nilai"; //? Method POST, Param body= id
   // ! TUTUP DESTINASI
 
   // ! BERITA

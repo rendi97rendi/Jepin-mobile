@@ -59,6 +59,18 @@ class ApiService {
   static String teleponPenting = baseApi + "teleponpenting";
   // static var feedback = baseApi + "feedback/send";
 
+  static var souvenirCategory = baseApi + "kategori_info_oleh_oleh"; //method get
+  static var souvenirList =
+      baseApi + "oleh-oleh"; //method get, param : page, search
+  static var souvenirDetail = baseApi + "oleh-oleh/detail"; //method get, .../{id}
+  static var souvenirReviewList =
+      baseApi + "detail_souvenir_review"; //method get, .../{id}
+  static var souvenirReviewCreate = baseApi +
+      "create_souvenir_review"; //method POST, param : rating, komentar, oleh_oleh_id, user_id
+  static var souvenirReviewDelete =
+      baseApi + "delete_souvenir_review"; //method POST, param : id
+  static var urlImageSouvenir = "/uploads/infoOlehOleh/";
+
   static var berita = basePemkotApi + "berita"; //method get
   static var latest = basePemkotApi + "berita/latest"; //method get
   static var newsList = baseApi + "berita"; //method get, param : page, q

@@ -62,6 +62,14 @@ class SPLPDApiId {
     static const String penilaianRestoranApiId = "Y0xXTTlyYlM5R1dUVHhWWk1VbERYZz09";
     static const String tambahPenilaianRestoranApiId = "KzFYRWFIZUNtdEhXeVZVWExIRXphZz09";
     static const String hapusPenilaianRestoranApiId = "OUVVM0tpZFU0dThoSEorZHgxSVVxUT09";
+    // ! OLEH-OLEH
+    static const String daftartOlehOlehApiId = "YjFoWTVzQUlyVUY2OHByRFVqTGdPdz09";
+    static const String kategoriOlehOlehApiId = "OXQwa3FNbFVyK2ZhUVhMNVVqVElmZz09";
+    static const String detailOlehOlehApiId = "R29uVGNwRFUvOXpVUXdleFNpSm5GQT09";
+    static const String gambarOlehOlehApiId = "V2FLaVUwV0dyMWJXZERHR0NoYytXQT09";
+    static const String penilaianOlehOlehApiId = "SklSTnE4VFp4V2dZOThiWnhGQlQydz09";
+    static const String tambahPenilaianOlehOlehApiId = "TWlFNnhyT0ovUDU4SEFJbDhKWnB3UT09";
+    static const String hapusPenilaianOlehOlehApiId = "ZnV0TGoyUmxZMGhsc0FlRUpTdEE4dz09";
   // ! TUTUP DESTINASI
 
   // ! BERITA

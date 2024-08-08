@@ -316,7 +316,7 @@ class _PlaceState extends State<Place> {
               _openMenu(index);
             },
             customBorder: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(50)),
+              borderRadius: BorderRadius.all(Radius.circular(20)),
             ),
             child: _ViewHolderDshMenu(index: index),
           );

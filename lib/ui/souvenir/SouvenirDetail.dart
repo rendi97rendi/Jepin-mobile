@@ -760,7 +760,7 @@ class _SouvenirDetailState extends State<SouvenirDetail> {
                                       imageUrl: _listSouvenirImage.length == 0
                                           ? "https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png"
                                           : ApiService.baseUrl +
-                                              ApiService.urlImageHotel +
+                                              ApiService.urlImageSouvenir +
                                               _listSouvenirImage[i]["nama"],
                                       placeholder: (context, url) =>
                                           new CircularProgressIndicator(),
@@ -816,26 +816,29 @@ class _SouvenirDetailState extends State<SouvenirDetail> {
     var param = "/" + id;
 
     var response = await http.get(
-      Uri.parse(ApiService.hotelDetail + param),
+      Uri.parse(ApiService.souvenirDetail + param),
       headers: {"Accept": "application/json"},
     );
+    try {
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var result = json.decode(response.body);
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      var result = json.decode(response.body);
+        if (result["status"] == "success") {
+          _dataSouvenirDetail = result["data"];
+          _listSouvenirEvent = result["data"]["event"];
+          _listSouvenirImage = result["data"]["details"];
 
-      if (result["status"] == "success") {
-        _dataSouvenirDetail = result["data"];
-        _listSouvenirEvent = result["data"]["event"];
-        _listSouvenirImage = result["data"]["details"];
-
-        setState(() {
-          _loadingDetail = false;
-        });
+          setState(() {
+            _loadingDetail = false;
+          });
+        } else {
+          MyHelper.toast(context, MyString.msgError);
+        }
       } else {
         MyHelper.toast(context, MyString.msgError);
       }
-    } else {
-      MyHelper.toast(context, MyString.msgError);
+    } catch (e) {
+        MyHelper.toast(context, e.toString());
     }
 
     return "Success!";
@@ -850,7 +853,7 @@ class _SouvenirDetailState extends State<SouvenirDetail> {
     var param = "/" + id + "?page=" + page;
 
     var response = await http.get(
-      Uri.parse(ApiService.hotelReviewList + param),
+      Uri.parse(ApiService.souvenirReviewList + param),
       headers: {"Accept": "application/json"},
     );
 
@@ -900,7 +903,7 @@ class _SouvenirDetailState extends State<SouvenirDetail> {
     map["hotel_id"] = this.widget.id.toString();
     map["user_id"] = prefs.getString(MyConstanta.userId);
 
-    var response = await http.post(Uri.parse(ApiService.hotelReviewCreate),
+    var response = await http.post(Uri.parse(ApiService.souvenirReviewCreate),
         headers: {
           "Accept": "application/json",
           "Authorization": prefs.getString(MyConstanta.saveToken) ?? ''
@@ -946,7 +949,7 @@ class _SouvenirDetailState extends State<SouvenirDetail> {
     var map = new Map<String, dynamic>();
     map["id"] = idTourismReview;
 
-    var response = await http.post(Uri.parse(ApiService.hotelReviewDelete),
+    var response = await http.post(Uri.parse(ApiService.souvenirReviewDelete),
         headers: {
           "Accept": "application/json",
           "Authorization": prefs.getString(MyConstanta.saveToken) ?? ''

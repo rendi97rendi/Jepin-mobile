@@ -67,6 +67,14 @@ class SPLPDApiService {
     static const String penilaianRestoran = baseAPI + "nilai-restoran"; //? Method GET, Param=id => Endpoint/{id}
     static const String tambahPenilaianRestoran = baseAPI + "tambah-nilai-restoran"; //? Method POST, Param body=rating, komentar, wisata_id, user_id
     static const String hapusPenilaianRestoran = baseAPI + "hapus-nilai-restoran"; //? Method POST, Param body=id
+    // ! Oleh-Oleh
+    static const String daftartOlehOleh = baseAPI + "jepin-oleh-oleh-66b41897cb3bc"; //? Method GET, Param=page/search => Endpoint/{page/search}
+    static const String kategoriOlehOleh = baseAPI + "jepin-kategori-oleh-oleh-66b418cedde3a"; //? Method GET
+    static const String detailOlehOleh = baseAPI + "jepin-detail-oleh-oleh-66b4190fd8399"; //? Method GET, Param=id => Endpoint/{id}
+    static const String gambarOlehOleh = "jepin-gambar-oleh-oleh-66b41a68561cc"; //? Method GET, Param=nama-gambar => Endpoint/{nama-gambar}
+    static const String penilaianOlehOleh = baseAPI + "jepin-nilai-oleh-oleh-66b41aa59e638"; //? Method GET, Param=id => Endpoint/{id}
+    static const String tambahPenilaianOlehOleh = baseAPI + "jepin-tambah-nilai-oleh-oleh-66b41b028b2dd"; //? Method POST, Param body=rating, komentar, wisata_id, user_id
+    static const String hapusPenilaianOlehOleh = baseAPI + "jepin-hapus-nilai-oleh-oleh-66b41b3a1e667"; //? Method POST, Param body= id
   // ! TUTUP DESTINASI
 
   // ! BERITA
