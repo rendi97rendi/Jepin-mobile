@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:pontianak_smartcity/api/SPLPDApiService.dart';
+import 'package:pontianak_smartcity/common/MyConstanta.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyHttp {
   final header = {
@@ -18,7 +20,7 @@ class MyHttp {
     setUrl += '?api_id=$apiId';
     
     final url = Uri.parse(setUrl);
-
+    
     try {
       final response = await http.get(url, headers: header);
 
@@ -37,6 +39,9 @@ class MyHttp {
       String baseURL, String apiId, Map<String, dynamic> body) async {
     final url = Uri.parse('$baseURL');
     body['api_id'] = apiId;
+    //? get Token
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    header['Authorization'] = prefs.getString(MyConstanta.saveToken) ?? '';
 
     try {
       final response =

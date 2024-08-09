@@ -91,7 +91,7 @@ class ApiService {
       "user/update"; //method post, param : bearer token, name, username, email
   static var userDeleteProfile =
       baseApi + "user/delete"; //method post, param: bearer token, id
-  static var feedback = baseApi + 'feedback';
+  static var feedback = baseApi + 'feedback/get';
   static var sendFeedback = baseApi + 'feedback/send';
   static var sendEmail = baseApi + "user/kirim-email"; //method post, param : email
   static var getCode = baseApi + "user/ambil-kode"; //method get, param : email

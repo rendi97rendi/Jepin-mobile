@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:pontianak_smartcity/api/ApiService.dart';
+import 'package:pontianak_smartcity/api/SPLPDApiId.dart';
+import 'package:pontianak_smartcity/api/SPLPDApiService.dart';
 import 'package:pontianak_smartcity/common/MyColor.dart';
 import 'package:pontianak_smartcity/common/MyFontSize.dart';
 import 'package:pontianak_smartcity/common/MyHelper.dart';
+import 'package:pontianak_smartcity/common/MyHttp.dart';
 import 'package:pontianak_smartcity/common/MyString.dart';
 import 'package:pontianak_smartcity/master_layout/MyLayoutImage.dart';
 import 'package:pontianak_smartcity/ui/dashboard/SmartCity.dart';
@@ -24,6 +27,9 @@ class _NewsState extends State<News> {
   // --- variable ---
   List _listNews = [];
   int _page = 1;
+
+  final MyHttp myHttp = MyHttp(); // ! Initial Helper Http
+  final String _imgPlaceholder = SPLPDApiService.imagePlaceholder;
 
   final defaultTargetPlatform = TargetPlatform.android;
 
@@ -194,47 +200,31 @@ class _NewsState extends State<News> {
   }
 
   Future<String> showData(int page, String search, bool clearListParent) async {
-    var param = "?page=" + page.toString() + "&q=" + search;
-
-    var response = await http.get(
-      Uri.parse(ApiService.berita + param),
-      headers: {"Accept": "application/json"},
-    );
+    var param = "/${page.toString()}/$search";
 
     List<dynamic> data = [];
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      var result = json.decode(response.body);
-      // print(result);
-      if (result["status"] == true) {
-        var newData = result['data']['data'] as List<dynamic>;
-        // print(data);
-        // inspect(newData[0]['id']);
-        data = newData;
-        // print(data[0]['img_gambar']);
-        if (data.length == 0) {
-          setState(() {
-            _page--;
-            _refreshController.loadNoData();
-          });
-        } else {
-          if (clearListParent) _listNews.clear();
-          _listNews.addAll(data);
-          // print(_listNews.length);
-          _refreshController.loadComplete();
-          setState(() {});
-        }
+    final result =
+        await myHttp.get(SPLPDApiService.berita, SPLPDApiId.beritaApiId, param);
 
-        _refreshController.refreshCompleted();
+    if (result["status"] == true) {
+      var newData = result['data']['data'] as List<dynamic>;
+      data = newData;
+      if (data.length == 0) {
+        setState(() {
+          _page--;
+          _refreshController.loadNoData();
+        });
       } else {
-        // print('terjadi kesalahan');
-        MyHelper.toast(context, MyString.msgError);
-        ;
+        if (clearListParent) _listNews.clear();
+        _listNews.addAll(data);
+        // print(_listNews.length);
+        _refreshController.loadComplete();
+        setState(() {});
       }
+      _refreshController.refreshCompleted();
     } else {
-      // print('error');
       MyHelper.toast(context, MyString.msgError);
-      ;
     }
 
     return "Success!";
@@ -263,6 +253,7 @@ class _ViewHolderNewsList extends StatelessWidget {
   final int id, index;
   final List image;
   final String title, content, date, status, writer;
+  final String _imgPlaceholder = SPLPDApiService.imagePlaceholder;
 
   const _ViewHolderNewsList(
       {Key? key,
@@ -308,7 +299,7 @@ class _ViewHolderNewsList extends StatelessWidget {
                 fit: BoxFit.cover,
                 image: image.isNotEmpty
                     ? ApiService.newsDetailImage + image[0]
-                    : ApiService.imagePlaceholder,
+                    : _imgPlaceholder,
                 height: 140.0,
                 width: 140.0,
               ),
@@ -359,6 +350,7 @@ class _ViewHolderNewsWide extends StatelessWidget {
   final int id, index;
   final List image;
   final String title, content, date, status, writer;
+  final String _imgPlaceholder = SPLPDApiService.imagePlaceholder;
 
   const _ViewHolderNewsWide(
       {Key? key,
@@ -393,7 +385,7 @@ class _ViewHolderNewsWide extends StatelessWidget {
               fit: BoxFit.cover,
               image: image.isNotEmpty
                   ? ApiService.newsDetailImage + image[0]
-                  : ApiService.imagePlaceholder,
+                  : _imgPlaceholder,
               height: MediaQuery.of(context).size.width - 100,
               width: double.infinity,
             ),

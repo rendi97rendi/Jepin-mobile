@@ -7,11 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:pontianak_smartcity/api/ApiService.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:pontianak_smartcity/api/SPLPDApiId.dart';
+import 'package:pontianak_smartcity/api/SPLPDApiService.dart';
 import 'package:pontianak_smartcity/common/MyCommon.dart';
 import 'package:pontianak_smartcity/common/MyConstanta.dart';
 import 'package:pontianak_smartcity/common/MyFontSize.dart';
 import 'package:pontianak_smartcity/common/MyHelper.dart';
 import 'package:pontianak_smartcity/common/MyHelperActivity.dart';
+import 'package:pontianak_smartcity/common/MyHttp.dart';
 import 'package:pontianak_smartcity/common/MyString.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:pontianak_smartcity/ui/event/EventDetail.dart';
@@ -57,6 +60,8 @@ class _HotelDetailState extends State<HotelDetail> {
 
   ScrollController _scrollController = new ScrollController();
   final _commentController = TextEditingController();
+  final MyHttp myHttp = MyHttp(); // ! Initial Helper Http
+  final String _imgPlaceholder = SPLPDApiService.imagePlaceholder;
 
   @override
   void initState() {
@@ -758,7 +763,7 @@ class _HotelDetailState extends State<HotelDetail> {
                                     i,
                                     CachedNetworkImage(
                                       imageUrl: _listTourismImage.length == 0
-                                          ? "https://www.logistec.com/wp-content/uploads/2017/12/placeholder.png"
+                                          ? _imgPlaceholder
                                           : ApiService.baseUrl +
                                               ApiService.urlImageHotel +
                                               _listTourismImage[i]["nama"],
@@ -815,25 +820,17 @@ class _HotelDetailState extends State<HotelDetail> {
 
     var param = "/" + id;
 
-    var response = await http.get(
-      Uri.parse(ApiService.hotelDetail + param),
-      headers: {"Accept": "application/json"},
-    );
+    final result = await myHttp.get(SPLPDApiService.detailPenginapan + param,
+        SPLPDApiId.detailPenginapanApiId);
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      var result = json.decode(response.body);
+    if (result["status"] == "success") {
+      _dataTourismDetail = result["data"];
+      _listTourismEvent = result["data"]["event"];
+      _listTourismImage = result["data"]["details"];
 
-      if (result["status"] == "success") {
-        _dataTourismDetail = result["data"];
-        _listTourismEvent = result["data"]["event"];
-        _listTourismImage = result["data"]["details"];
-
-        setState(() {
-          _loadingDetail = false;
-        });
-      } else {
-        MyHelper.toast(context, MyString.msgError);
-      }
+      setState(() {
+        _loadingDetail = false;
+      });
     } else {
       MyHelper.toast(context, MyString.msgError);
     }
@@ -847,39 +844,30 @@ class _HotelDetailState extends State<HotelDetail> {
       _loadingReview = true;
     });
 
-    var param = "/" + id + "?page=" + page;
-
-    var response = await http.get(
-      Uri.parse(ApiService.hotelReviewList + param),
-      headers: {"Accept": "application/json"},
-    );
-
     List data = [];
+    var param = "/" + id + "/" + page;
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      var result = json.decode(response.body);
+    final result = await myHttp.get(SPLPDApiService.penilaianPenginapan + param,
+        SPLPDApiId.penilaianPenginapanApiId);
 
-      if (result["status"] == "success") {
-        _dataTourismReview = result;
-        data = result["data"]["data"];
+    if (result["status"] == "success") {
+      _dataTourismReview = result;
+      data = result["data"]["data"];
 
-        if (data.length == 0) {
-          setState(() {
-            _page--;
-          });
-        } else {
-          setState(() {
-            if (clearListParent) _listTourismReview.clear();
-            _listTourismReview.addAll(data);
-          });
-        }
-
+      if (data.length == 0) {
         setState(() {
-          _loadingReview = false;
+          _page--;
         });
       } else {
-        MyHelper.toast(context, MyString.msgError);
+        setState(() {
+          if (clearListParent) _listTourismReview.clear();
+          _listTourismReview.addAll(data);
+        });
       }
+
+      setState(() {
+        _loadingReview = false;
+      });
     } else {
       MyHelper.toast(context, MyString.msgError);
     }
@@ -899,13 +887,15 @@ class _HotelDetailState extends State<HotelDetail> {
     map["komentar"] = _commentController.text;
     map["hotel_id"] = this.widget.id.toString();
     map["user_id"] = prefs.getString(MyConstanta.userId);
-
-    var response = await http.post(Uri.parse(ApiService.hotelReviewCreate),
-        headers: {
-          "Accept": "application/json",
-          "Authorization": prefs.getString(MyConstanta.saveToken) ?? ''
-        },
-        body: map);
+    
+    var response = await http.post(
+      Uri.parse(ApiService.hotelReviewCreate),
+      headers: {
+        "Accept": "application/json",
+        "Authorization": prefs.getString(MyConstanta.saveToken) ?? ''
+      },
+      body: map,
+    );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       var result = json.decode(response.body);
@@ -926,7 +916,6 @@ class _HotelDetailState extends State<HotelDetail> {
       });
     } else {
       MyHelper.toast(context, MyString.msgError);
-      ;
 
       setState(() {
         _loadCreateReview = false;
@@ -946,12 +935,14 @@ class _HotelDetailState extends State<HotelDetail> {
     var map = new Map<String, dynamic>();
     map["id"] = idTourismReview;
 
-    var response = await http.post(Uri.parse(ApiService.hotelReviewDelete),
-        headers: {
-          "Accept": "application/json",
-          "Authorization": prefs.getString(MyConstanta.saveToken) ?? ''
-        },
-        body: map);
+    var response = await http.post(
+      Uri.parse(ApiService.hotelReviewDelete),
+      headers: {
+        "Accept": "application/json",
+        "Authorization": prefs.getString(MyConstanta.saveToken) ?? ''
+      },
+      body: map,
+    );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       var result = json.decode(response.body);

@@ -76,7 +76,7 @@ class SPLPDApiId {
   static const String beritaApiId = "Y1BkZytzZDEwbk9zUnFHYWlpeUtFdz09";
   static const String beritaTerbaruApiId = "SFJ3VTNIdVRzNWRUYzNwUm8rN2xWZz09";
   static const String daftarBeritaApiId = "Q2tMRlcyTlpJU2VMZ242Y1pRdmxnZz09";
-  static const String detailBeritaApiId = "WDJqck92U0N1MGNlQjczWXFKN2cvdz09";
+  static const String detailBeritaApiId = "ZllUcVB1dlErcXpqVnc3aWYvL3hwUT09";
   static const String gambarDetailBeritaApiId = "elR3YXFKdGRVcTk5YmMwNkdXK2Rudz09";
   static const String pencarianBeritaApiId = "NW41Tll5QXhVQ090dGowYWVGTkQ5QT09";
   // ! TUTUP BERITA

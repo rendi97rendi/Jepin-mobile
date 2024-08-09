@@ -194,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         Container(
-          height: 300.0,
+          height: 320.0,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: _dataBerita.length,
@@ -217,13 +217,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       alignment: Alignment.topCenter,
                       children: <Widget>[
                         Positioned(
-                          bottom: 15.0,
+                          bottom: 0.0,
                           child: Container(
-                            height: 120.0,
                             width: 280.0,
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(10.0),
+                              borderRadius: BorderRadius.vertical(
+                                bottom: Radius.circular(10.0),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black26,
+                                  offset: Offset(0.0, -2.0),
+                                  blurRadius: 6.0,
+                                ),
+                              ],
                             ),
                             child: Padding(
                               padding: EdgeInsets.all(10.0),
@@ -231,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: <Widget>[
-                                  SizedBox(height: 20.0),
+                                  SizedBox(height: 80.0),
                                   Text(
                                     _dataBerita[index]['judul_berita'],
                                     maxLines: 2,
@@ -241,18 +249,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                  SizedBox(height: 2.0),
+                                  SizedBox(height: 5.0), // Increased space
                                   Text(
                                     DateFormat('EEEE, dd MMM yyyy', 'id_ID')
-                                        .format(DateTime.parse(
-                                            _dataBerita[index]
-                                                ['tanggal_berita'])),
+                                        .format(
+                                      DateTime.parse(
+                                          _dataBerita[index]['tanggal_berita']),
+                                    ),
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
-                                      color: Colors.grey,
+                                      color:
+                                          Colors.grey[700], // Dark grey color
                                     ),
                                   ),
-                                  SizedBox(height: 2.0),
+                                  SizedBox(height: 10.0), // Space below date
                                 ],
                               ),
                             ),
@@ -343,17 +353,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 10,
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16,
+                    padding: EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      // bottom: 40,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Smart City',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Text(
+                            'Smart City',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                         SizedBox(
@@ -397,14 +412,20 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                             }),
                         SizedBox(
-                          height: 10,
+                          height: 20,
                         ),
-                        Text(
-                          'More',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Text(
+                            'More',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
+                        ),
+                        SizedBox(
+                          height: 20,
                         ),
                         GridView.builder(
                             physics: ScrollPhysics(),
@@ -417,8 +438,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 3,
-                              crossAxisSpacing: 10,
-                              childAspectRatio: 1 / 1.28,
+                              crossAxisSpacing: 15,
+                              childAspectRatio: 1 / 1.39,
                             ),
                             itemBuilder: (BuildContext context, int index) {
                               if (!_isLoading)
@@ -688,10 +709,11 @@ class MenuItem extends StatelessWidget {
           );
         } else if (_dataMenu[index]['menu']['id'] == 164) {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => TeleponScreen(),
-              ));
+            context,
+            MaterialPageRoute(
+              builder: (context) => TeleponScreen(),
+            ),
+          );
         } else if (_dataMenu[index]['menu']['id'] == 294) {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => MapsScreen()));
@@ -702,11 +724,12 @@ class MenuItem extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => NewWebView(
-                        title: _dataMenu[index]["menu"]["label"],
-                        url: _dataMenu[index]["menu"]["link"],
-                        breadcrumbs: _dataMenu[index]["menu"]["label"],
-                      )),
+                builder: (context) => NewWebView(
+                  title: _dataMenu[index]["menu"]["label"],
+                  url: _dataMenu[index]["menu"]["link"],
+                  breadcrumbs: _dataMenu[index]["menu"]["label"],
+                ),
+              ),
             );
           } else {
             Navigator.push(

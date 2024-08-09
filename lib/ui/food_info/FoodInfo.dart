@@ -6,8 +6,12 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pontianak_smartcity/api/ApiService.dart';
+import 'package:pontianak_smartcity/api/SPLPDApiId.dart';
+import 'package:pontianak_smartcity/api/SPLPDApiService.dart';
+import 'package:pontianak_smartcity/common/MyColor.dart';
 import 'package:pontianak_smartcity/common/MyFontSize.dart';
 import 'package:pontianak_smartcity/common/MyHelper.dart';
+import 'package:pontianak_smartcity/common/MyHttp.dart';
 import 'package:pontianak_smartcity/common/MyString.dart';
 import 'package:toast/toast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -62,6 +66,7 @@ class _FoodInfoState extends State<FoodInfo> {
   //var _dataLoading = true;
 
   final defaultTargetPlatform = TargetPlatform.android;
+  final MyHttp myHttp = MyHttp(); // ! Initial Helper Http
 
   //ScrollController _scrollController = ScrollController();
   TextEditingController _searchController = TextEditingController();
@@ -73,43 +78,33 @@ class _FoodInfoState extends State<FoodInfo> {
     //   _dataLoading = true;
     // });
 
-    var param = "?page=" + page.toString() + "&search=" + search;
-
-    var response = await http.get(Uri.parse(ApiService.foodInfo + param),
-        headers: {"Accept": "application/json"});
-
     List data = [];
+    var param = "/${page.toString()}/${search}";
+    final result = await myHttp.get(
+        SPLPDApiService.hargaPangan + param, SPLPDApiId.hargaPanganApiId);
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      var result = json.decode(response.body);
+    if (result["status"] == "success") {
+      _listCarousel = result["slider"];
+      data = result["data"]["data"];
 
-      if (result["status"] == "success") {
-        _listCarousel = result["slider"];
-        data = result["data"]["data"];
-
-        if (data.length == 0) {
-          setState(() {
-            _page--;
-            //_dataLoading = false;
-            _refreshController.loadNoData();
-          });
-        } else {
-          setState(() {
-            if (clearListParent) _listFood.clear();
-            _listFood.addAll(data);
-            //_dataLoading = false;
-            _refreshController.loadComplete();
-          });
-        }
-
-        _refreshController.refreshCompleted();
+      if (data.length == 0) {
+        setState(() {
+          _page--;
+          //_dataLoading = false;
+          _refreshController.loadNoData();
+        });
       } else {
-        MyHelper.toast(context, MyString.msgError);
-        ;
+        setState(() {
+          if (clearListParent) _listFood.clear();
+          _listFood.addAll(data);
+          //_dataLoading = false;
+          _refreshController.loadComplete();
+        });
       }
+
+      _refreshController.refreshCompleted();
     } else {
       MyHelper.toast(context, MyString.msgError);
-      ;
     }
 
     return "Success!";
@@ -117,7 +112,7 @@ class _FoodInfoState extends State<FoodInfo> {
 
   void _onRefresh() {
     //use _refreshController.refreshComplete() or refreshFailed() to end refreshing
-    showData(1, "", true);
+    showData(1, '0', true);
   }
 
   void _onLoading() {
@@ -133,7 +128,7 @@ class _FoodInfoState extends State<FoodInfo> {
       initialRefresh: true,
     );
 
-    showData(1, "", true);
+    showData(1, '0', true);
 
     // _scrollController.addListener((){
     //   if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
@@ -281,10 +276,26 @@ class _FoodInfoState extends State<FoodInfo> {
 
     return Scaffold(
       appBar: AppBar(
-        elevation: 0.0,
-        title: Text(MyString.commodityPrices),
+        backgroundColor: MyColor.colorAppbar,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+            if (context.mounted) {
+              Navigator.of(context).pop();
+            }
+          },
+        ),
+        title: Text(
+          MyString.commodityPrices.toUpperCase(),
+          style: TextStyle(
+              fontSize: MyFontSize.large,
+              fontWeight: FontWeight.bold,
+              color: Colors.white),
+        ),
         centerTitle: true,
       ),
+      backgroundColor: Colors.white,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[

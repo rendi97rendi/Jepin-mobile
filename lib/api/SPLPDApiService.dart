@@ -34,7 +34,7 @@ class SPLPDApiService {
   static const String carousel = baseAPI + "jepin-slider-6698b3f22f4b0"; //? Method GET
   static const String menuSmartcity = baseAPI + "jepin-menu-smartcity-6698b7734945f"; //? Method GET
     // ! MORE
-    static const String hargaPangan = baseAPI + "pangan"; //? Method GET
+    static const String hargaPangan = baseAPI + "jepin-pangan-66a73d2620d73"; //? Method GET
     static const String teleponPenting = baseAPI + "telepon-penting"; //? Method GET
 
   // ! TUTUP HOME
@@ -54,10 +54,10 @@ class SPLPDApiService {
     // ! PENGINAPAN
     static const String daftarPenginapan = baseAPI + "jepin-penginapan-6698cbd86eaa8"; //? Method GET, Param=page/search => Endpoint/{page/search}
     static const String kategoriPenginapan = baseAPI + "jepin-kategori-penginapan-6698cc183dee2"; //? Method GET
-    static const String detailPenginapan = baseAPI + "penginapan"; //? Method GET, Param=id => Endpoint/{id}
+    static const String detailPenginapan = baseAPI + "jepin-detail-penginapan-6698cc52ec7a4"; //? Method GET, Param=id => Endpoint/{id}
     static const String gambarPenginapan = "/uploads/infoHotelRestoran/"; //? Method GET, Param=nama-gambar => Endpoint/{nama-gambar}
-    static const String penilaianPenginapan = baseAPI + "penginapan/nilai"; //? Method GET, Param=id => Endpoint/{id}
-    static const String tambahPenilaianPenginapan = baseAPI + "penginapan/tambah-nilai"; //? Method POST, Param body=rating, komentar, wisata_id, user_id
+    static const String penilaianPenginapan = baseAPI + "jepin-nilai-penginapan-6698ccd718ebe"; //? Method GET, Param=id => Endpoint/{id}
+    static const String tambahPenilaianPenginapan = baseAPI + "jepin-tambah-nilai-penginapan-6698cd2f5e8d0"; //? Method POST, Param body=rating, komentar, wisata_id, user_id
     static const String hapusPenilaianPenginapan = baseAPI + "penginapan/hapus-nilai"; //? Method POST, Param body= id
     // ! RESTORAN
     static const String daftarRestoran = baseAPI + "jepin-restoran-669ef89bbed2e"; //? Method GET, Param=page/search => Endpoint/{page/search}
@@ -78,10 +78,10 @@ class SPLPDApiService {
   // ! TUTUP DESTINASI
 
   // ! BERITA
-  static const String berita = baseAPI + "berita"; //? Method GET
+  static const String berita = baseAPI + "jepin-berita-pemkot-669efd26a9383"; //? Method GET
   static const String beritaTerbaru = baseAPI + "berita-pemkot-terkini-659b5a6cf2d33"; //? Method GET
   static const String daftarBerita = baseAPI + "berita"; //? Method GET, Param=page,q
-  static const String detailBerita = baseAPI + "berita"; //? Method GET, Param=id => Endpoint/{id}
+  static const String detailBerita = baseAPI + "jepin-detail-berita-kota-66b48674f1edb"; //? Method GET, Param=id => Endpoint/{id}
   static const String gambarDetailBerita = baseAPI + "/file/berita/"; //? Method GET, Param=id => Endpoint/{id}
   static const String pencarianBerita = baseAPI + "cari"; //? Method GET, Param=page,q
   // ! TUTUP BERITA

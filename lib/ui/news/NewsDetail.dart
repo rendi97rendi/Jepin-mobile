@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pontianak_smartcity/api/ApiService.dart';
+import 'package:pontianak_smartcity/api/SPLPDApiId.dart';
+import 'package:pontianak_smartcity/api/SPLPDApiService.dart';
 import 'package:pontianak_smartcity/common/MyColor.dart';
 import 'package:pontianak_smartcity/common/MyFontSize.dart';
 import 'package:pontianak_smartcity/common/MyHelper.dart';
+import 'package:pontianak_smartcity/common/MyHttp.dart';
 import 'package:pontianak_smartcity/common/MyString.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:pontianak_smartcity/master_layout/MyLayoutImage.dart';
@@ -33,6 +36,8 @@ class _NewsDetailState extends State<NewsDetail> {
   String? url;
   PageController _scrollController =
       PageController(initialPage: 0, keepPage: true);
+  final MyHttp myHttp = MyHttp(); // ! Initial Helper Http
+  final String _imgPlaceholder = SPLPDApiService.imagePlaceholder;
 
   // final smilieOp = BuildOp(
   //   onWidgets: (meta, pieces) {
@@ -209,26 +214,16 @@ class _NewsDetailState extends State<NewsDetail> {
     });
 
     var param = "/" + id.toString();
-    var response = await http.get(
-      Uri.parse(ApiService.berita + param),
-      headers: {"Accept": "application/json"},
-    );
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      var result = json.decode(response.body);
-      if (result["status"] == true) {
-        _dataNewsDetail = result["data"];
-        image = jsonDecode(_dataNewsDetail['img_berita']);
-        // print(_dataNewsDetail['judul_berita']);
-        url = MyHelper.encodeURL(_dataNewsDetail['judul_berita']);
-        // print(url);
-      } else {
-        MyHelper.toast(context, MyString.msgError);
-        ;
-      }
+    final result = await myHttp.get(
+        SPLPDApiService.detailBerita + param, SPLPDApiId.detailBeritaApiId);
+    if (result["status"] == true) {
+      _dataNewsDetail = result["data"];
+      image = jsonDecode(_dataNewsDetail['img_berita']);
+      // print(_dataNewsDetail['judul_berita']);
+      url = MyHelper.encodeURL(_dataNewsDetail['judul_berita']);
+      // print(url);
     } else {
       MyHelper.toast(context, MyString.msgError);
-      ;
     }
 
     setState(() {
